@@ -7,6 +7,22 @@ function Bucket(bucketName, sdk){
   this.sdk = sdk;
 }
 /**
+ * 创建 Bucket
+ * 官方文档：https://developer.qiniu.com/kodo/api/1382/mkbucketv2
+*/
+Bucket.prototype.mk = function(region){
+  // 默认是华东地区
+  region = region || 'z0';
+
+  let EncodedBucketName = urlsafe_base64_encode(this.bucketName);
+
+  let options = {
+    path: '/mkbucketv2/' + EncodedBucketName + '/region/' + region
+  };
+
+  return this.sdk.rs(options);
+};
+/**
  * 设置 Bucket 镜像源
  * https://developer.qiniu.com/kodo/api/3966/bucket-image-source
  * @param {String} srcSiteUrl 镜像源的访问域名
@@ -23,22 +39,6 @@ Bucket.prototype.image = function(srcSiteUrl, host){
   //   let EncodedHost = urlsafe_base64_encode(host);
   //   options.path += '/host/' + EncodedHost;
   // }
-  return this.sdk.rs(options);
-};
-/**
- * 创建 Bucket
- * 官方文档：https://developer.qiniu.com/kodo/api/1382/mkbucketv2
-*/
-Bucket.prototype.mk = function(region){
-  // 默认是华东地区
-  region = region || 'z0';
-
-  let EncodedBucketName = urlsafe_base64_encode(this.bucketName);
-
-  let options = {
-    path: '/mkbucketv2/' + EncodedBucketName + '/region/' + region
-  };
-
   return this.sdk.rs(options);
 };
 /**

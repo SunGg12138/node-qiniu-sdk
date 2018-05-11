@@ -1,15 +1,15 @@
 ```javascript
 // 引入模块
-const SDK = require('node-qiniu-sdk');
-// 配置你的qiniu_sdk
-const qiniu_sdk = new SDK('<Your AccessKey>', '<Your SecretKey>');
+const Qiniu = require('node-qiniu-sdk');
+// 配置你的qiniu
+const qiniu = new Qiniu('<Your AccessKey>', '<Your SecretKey>');
 
 async function run (){
   /**
    * 获取 Bucket 列表
    * 官方文档：https://developer.qiniu.com/kodo/api/3926/get-service
   */
-  await qiniu_sdk.buckets();
+  await qiniu.buckets();
 
   /**
    * 异步第三方资源抓取
@@ -17,7 +17,7 @@ async function run (){
    * zone是七牛各区域机房代号，默认是z0(华东地区)
    * body就是官方文档中的Body参数
   */
-  await qiniu_sdk.sisyphus({
+  await qiniu.sisyphus({
       zone: 'z0',
       body: {
         url: 'http://p0vquqra2.bkt.clouddn.com/24993290_658467184540793_2921387702181767499_n.jpg;http://p0vquqra2.bkt.clouddn.com/test.jpg',
@@ -35,7 +35,7 @@ async function run (){
    *   fileName：操作文件的名字
    *   其它的参数和正常文件操作的参数一致
    */
-  await qiniu_sdk.batch({
+  await qiniu.batch({
     ops: [
       {
         _type: 'move',

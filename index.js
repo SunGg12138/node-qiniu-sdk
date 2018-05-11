@@ -54,6 +54,7 @@ SDK.prototype.sisyphus = function(options){
   options.host = 'api-' + options.zone + '.qiniu.com';
   options.method = 'POST';
   options['Content-Type'] = 'application/json';
+  if (Array.isArray(options.body.url)) options.body.url = options.body.url.join(';');
   let qiniu_token = token.qiniu.call(this, options);
 
   return rp({

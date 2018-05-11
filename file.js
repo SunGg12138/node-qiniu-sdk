@@ -4,6 +4,7 @@ const token = require('./lib/token');
 const debug = require('debug')('dev');
 const rp = require('request-promise');
 const EncodedEntryURI = require('./lib/EncodedEntryURI');
+const urlsafe_base64_encode = require('./lib/urlsafe_base64_encode');
 
 module.exports = File;
 
@@ -39,16 +40,17 @@ File.prototype.upload = function(options){
   return rp({
     method: 'POST',
     url: 'http://up.qiniu.com',
-    formData: options
+    formData: options,
+    json: true
   });
 };
 /**
- * 资源移动／重命名
- * 官方文档：https://developer.qiniu.com/kodo/api/1288/move
+ * 资源复制
+ * 官方文档：https://developer.qiniu.com/kodo/api/1254/copy
 */
-File.prototype.move = function(dest, isForce){
+File.prototype.copy = function(dest, isForce){
   let options = {
-    _type: 'move',
+    _type: 'copy',
     bucket: this.bucketName,
     fileName: this.fileName,
     dest: dest,
@@ -58,12 +60,12 @@ File.prototype.move = function(dest, isForce){
   return this.sdk.rs(options);
 };
 /**
- * 资源复制
- * 官方文档：https://developer.qiniu.com/kodo/api/1254/copy
+ * 资源移动／重命名
+ * 官方文档：https://developer.qiniu.com/kodo/api/1288/move
 */
-File.prototype.copy = function(dest, isForce){
+File.prototype.move = function(dest, isForce){
   let options = {
-    _type: 'copy',
+    _type: 'move',
     bucket: this.bucketName,
     fileName: this.fileName,
     dest: dest,
@@ -152,6 +154,22 @@ File.prototype.chgm = function(options){
   options.bucket = this.bucketName;
   options.fileName = this.fileName;
   options.path = this.sdk.getOperation(options);
+  return this.sdk.rs(options);
+};
+/**
+ * 第三方资源抓取
+ * 官方文档：https://developer.qiniu.com/kodo/api/1263/fetch
+*/
+File.prototype.fetch = function(url){
+  if (!url) return Promise.reject(new Error('url param is required'));
+
+  let _EncodedURL = urlsafe_base64_encode(url),
+      _EncodedEntryURI = EncodedEntryURI(this.bucketName, this.fileName),
+      options = {
+        path: '/fetch/' + _EncodedURL + '/to/' + _EncodedEntryURI,
+        host: 'http://iovip.qbox.me'
+      };
+
   return this.sdk.rs(options);
 };
 /**

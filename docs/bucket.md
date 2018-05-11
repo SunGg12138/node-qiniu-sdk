@@ -1,13 +1,13 @@
 ```javascript
 // 引入模块
-const SDK = require('node-qiniu-sdk');
-// 配置你的qiniu_sdk
-const qiniu_sdk = new SDK('<Your AccessKey>', '<Your SecretKey>');
+const Qiniu = require('node-qiniu-sdk');
+// 配置你的qiniu
+const qiniu = new Qiniu('<Your AccessKey>', '<Your SecretKey>');
 
 async function run (){
 
   // 创建可管理的储存空间对象
-  const bucket = qiniu_sdk.bucket('<存储空间名称>');
+  const bucket = qiniu.bucket('<存储空间名称>');
 
   // 如果你没有该名称的储存空间，使用mk方法会创建一个
   // 官方文档：https://developer.qiniu.com/kodo/api/1382/mkbucketv2

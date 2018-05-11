@@ -1,13 +1,13 @@
 ```javascript
 // 引入模块
-const SDK = require('node-qiniu-sdk');
-// 配置你的qiniu_sdk
-const qiniu_sdk = new SDK('<Your AccessKey>', '<Your SecretKey>');
+const Qiniu = require('node-qiniu-sdk');
+// 配置你的qiniu
+const qiniu = new Qiniu('<Your AccessKey>', '<Your SecretKey>');
 
 async function run (){
   // 创建可管理的文件对象
   // 存储空间名称与文件名称中间用 ":" 分隔
-  const file = qiniu_sdk.file('<存储空间名称>:<文件名称>');
+  const file = qiniu.file('<存储空间名称>:<文件名称>');
 
   // 直传文件
   // 参数还有很多，只有path参数是必须
@@ -43,6 +43,10 @@ async function run (){
   // 资源元信息修改，未通过测试用例
   // 官方文档：https://developer.qiniu.com/kodo/api/1252/chgm
   await file.chgm();
+  
+  // 第三方资源抓取
+  // 官方文档：https://developer.qiniu.com/kodo/api/1263/fetch
+  await file.fetch('https://www.baidu.com/img/bd_logo1.png?qua=high');
 
   // 镜像资源更新，还未测试
   // 官方文档：https://developer.qiniu.com/kodo/api/1293/prefetch
