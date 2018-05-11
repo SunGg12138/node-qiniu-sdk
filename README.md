@@ -49,6 +49,9 @@ await file.delete();
 # 格式与qiniu.config.default.json相同，你需要配置你的qiniu.config.json
 # tip:别忘了把qiniu.config.default.json的名字改成qiniu.config.json
 $ mocha
+
+# 如果想看返回的数据
+$ DEBUG=test mocha
 ```
 
 ## 先说哪些接口还没实现吧，有时间再实现或大家帮帮忙

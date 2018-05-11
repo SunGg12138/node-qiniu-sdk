@@ -173,7 +173,7 @@ File.prototype.fetch = function(url){
   return this.sdk.rs(options);
 };
 /**
- * 镜像资源更新 未测试
+ * 镜像资源更新
  * 官方文档：https://developer.qiniu.com/kodo/api/1293/prefetch
 */
 File.prototype.prefetch = function(){

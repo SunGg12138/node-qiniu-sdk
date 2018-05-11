@@ -7,6 +7,8 @@
 
 ## 同步官方接口预览
 
+[同步官方接口预览链接](https://developer.qiniu.com/kodo/api/1731/api-overview)
+
 官方接口            | 在这里的接口           | 说明 
 -------------------|----------------------|----------------------------------
 buckets	           | sdk.buckets          | 列举一个账号的所有空间
@@ -25,7 +27,7 @@ delete   	         | file.delete          | 删除指定资源
 list    	         | bucket.list          | 用于列举指定空间里的所有文件条目
 fetch    	         | file.fetch           | 从指定 URL 抓取资源，并将该资源存储到指定空间中。每次只抓取一个文件，抓取时可以指定保存空间名和最终资源名
 batch   	         | 接口测试中             | 指在单一请求中执行多次获取元信息、移动、复制、删除操作，极大提高资源管理效率
-prefetch	         | 接口测试中             | 对于设置了镜像存储的空间，从镜像源站抓取指定名称的资源并存储到该空间中
+prefetch	         | file.prefetch        | 对于设置了镜像存储的空间，从镜像源站抓取指定名称的资源并存储到该空间中
 image   	         | bucket.image         | 为存储空间指定一个镜像回源网址，用于取回资源
 deleteAfterDays	   | file.deleteAfterDays | 设置指定资源的生命周期，即设置一个文件多少天后删除
 chtype  	         | file.chtype          | 修改文件的存储类型信息，即低频存储和标准存储的互相转换

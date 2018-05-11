@@ -48,7 +48,7 @@ async function run (){
   // 官方文档：https://developer.qiniu.com/kodo/api/1263/fetch
   await file.fetch('https://www.baidu.com/img/bd_logo1.png?qua=high');
 
-  // 镜像资源更新，还未测试
+  // 镜像资源更新
   // 官方文档：https://developer.qiniu.com/kodo/api/1293/prefetch
   await file.prefetch();
 

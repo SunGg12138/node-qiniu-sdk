@@ -99,6 +99,41 @@ describe('File 相关方法测试', function(){
     })
     .catch(console.error);
   });
+  it('prefetch 镜像资源更新', function(done){
+    (async function(){
+      try {
+        // 获取当前bucket的域名集合
+        let common_bucket_domains = await qiniu.bucket(common.bucketName).domain();
+        debug('当前bucket的域名集合为：%s', JSON.stringify(common_bucket_domains));
+
+        // 创建新的bucket并设置镜像源为当前bucket
+        let newBucketName = new Date().getTime() + '';
+        let bucket = qiniu.bucket(newBucketName);
+
+        let r1 = await bucket.mk();
+        debug('创建bucket：%s并返回：%s', newBucketName, JSON.stringify(r1));
+
+        let r2 = await bucket.image(common_bucket_domains[0]);
+        debug('设置Bucket镜像源并返回：%s', JSON.stringify(r2));
+
+        // 使用prefetch同步镜像文件
+        let r3 = await qiniu.file(newBucketName + ':' + common.fileName).prefetch();
+        debug('镜像资源更新并返回：%s', JSON.stringify(r3));
+        
+        let r4 = await bucket.drop();
+        debug('删除Bucket并返回：%s', JSON.stringify(r4));
+
+        done();
+      } catch (error) {
+        if (error.statusCode === 478) {
+          console.error(new Error('statusCode=478，镜像回源失败，主要指镜像源服务器出现异常。可以无视这个错误'));
+          done();
+        } else {
+          console.error(error);
+        }
+      }
+    })();
+  });
   it('delete 删除接口', function(done){
     qiniu.file(common.scope)
     .delete()
