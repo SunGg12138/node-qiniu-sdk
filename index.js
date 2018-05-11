@@ -2,6 +2,7 @@ const File = require('./file');
 const Bucket = require('./bucket');
 const token = require('./lib/token');
 const rp = require('request-promise');
+const querystring = require('querystring');
 const EncodedEntryURI = require('./lib/EncodedEntryURI');
 const urlsafe_base64_encode = require('./lib/urlsafe_base64_encode');
 
@@ -69,7 +70,7 @@ SDK.prototype.sisyphus = function(options){
   });
 };
 /**
- * 批量操作 测试未通过
+ * 批量操作
  * 官方文档：https://developer.qiniu.com/kodo/api/1250/batch
  */
 SDK.prototype.batch = function(options){
@@ -78,17 +79,13 @@ SDK.prototype.batch = function(options){
 
   options.host = 'http://rs.qiniu.com';
   options.path = '/batch';
-  options.body = '';
-
+  
   try {
-    // 循环设置body
-    options.ops.forEach(item => {
-      options.body += 'op=' + this.getOperation(item) + '&';
+    // 转换成['<Operation>', '<Operation>',...]的数组
+    let ops = options.ops.map(item => {
+      return this.getOperation(item);
     });
-    // 去掉最后一个"&"
-    options.body = options.body.replace(/\&$/, '');
-
-    // options.url = options.host + options.path + '?' + options.body;
+    options.body = querystring.stringify({op: ops});
   } catch (error) {
     return Promise.reject(error);
   }
@@ -152,9 +149,9 @@ SDK.prototype.rs = function(options){
       'Authorization': 'QBox ' + access_token
     },
     json: true,
-    form: options.form || {}
   };
-
+  request_options.form = (options.body || options.form) || {};
+  
   // 设置content-type
   if (options['content-type']) {
     request_options.headers['content-type'] = options['content-type'];

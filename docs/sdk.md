@@ -26,7 +26,7 @@ async function run (){
   });
 
   /**
-   * 批量操作 测试未通过
+   * 批量操作
    * 官方文档：https://developer.qiniu.com/kodo/api/1250/batch
    * 参数ops是操作指令的集合，必须是长度大于0的数组
    * 操作指令：
@@ -37,36 +37,11 @@ async function run (){
    */
   await qiniu.batch({
     ops: [
-      {
-        _type: 'move',
-        bucket: 'study',
-        fileName: 'test.png',
-        dest: 'test-1.png',
-        force: false
-      },
-      {
-        _type: 'copy',
-        bucket: 'study',
-        fileName: 'test2.png',
-        dest: 'test-2.png',
-        force: false
-      },
-      {
-        _type: 'chtype',
-        bucket: 'study',
-        fileName: 'test3.png',
-        type: 1
-      },
-      {
-        _type: 'stat',
-        bucket: 'study',
-        fileName: 'test12138.png',
-      },
-      {
-        _type: 'delete',
-        bucket: 'study',
-        fileName: 'games.data.js',
-      }
+      { _type: 'move', bucket: common.bucketName, fileName: 'test.png', dest: 'test-1.png', force: false },
+      { _type: 'copy',bucket: common.bucketName,fileName: 'test2.png',dest: 'test-2.png',force: false },
+      { _type: 'chtype', bucket: common.bucketName, fileName: 'test3.png', type: 1 },
+      { _type: 'stat', bucket: common.bucketName, fileName: 'test-1.png' },
+      { _type: 'delete', bucket: common.bucketName,fileName: 'test.js' }
     ]
   });
 }
