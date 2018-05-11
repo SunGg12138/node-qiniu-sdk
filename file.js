@@ -45,6 +45,118 @@ File.prototype.upload = function(options){
   });
 };
 /**
+ * 删除接口
+ * 官方文档：https://developer.qiniu.com/kodo/api/1257/delete
+ */
+File.prototype.delete = function(){
+
+  let options = {
+    _type: 'delete',
+    bucket: this.bucketName,
+    fileName: this.fileName
+  };
+  options.path = this.sdk.getOperation(options);
+
+  return this.sdk.rs(options);
+};
+/**
+ * 创建块
+ * 官方文档：https://developer.qiniu.com/kodo/api/1286/mkblk
+*/
+File.prototype.mkblk = function(options){
+  if (!options || !options.firstChunkBinary || !options.firstChunkSize) {
+    return Promise.reject('firstChunkBinary and firstChunkSize are required');
+  }
+  options.scope = this.scope;
+
+  let host = options.host || 'http://up.qiniu.com',
+      blockSize = options.blockSize || 4194304,
+      upload_token = options.upload_token || token.upload.call(this.sdk, options);
+
+  return rp({
+    method: 'POST',
+    url: host + '/mkblk/' + blockSize,
+    headers: {
+      'Content-Type': 'application/octet-stream',
+      'Content-Length': options.firstChunkSize,
+      'Authorization': 'UpToken ' + upload_token
+    },
+    json: true,
+    formData: {
+      firstChunkBinary: options.firstChunkBinary,
+    }
+  });
+};
+/**
+ * 上传片
+ * 官方文档：https://developer.qiniu.com/kodo/api/1251/bput
+ */
+File.prototype.bput = function(options){
+  if (!options || !options.ctx || !options.nextChunkOffset ||
+      !options.nextChunkBinary || !options.nextChunkSize
+  ) {
+    return Promise.reject('ctx, nextChunkOffset, nextChunkBinary, nextChunkSize are required');
+  }
+  let host = options.host || 'http://up.qiniu.com',
+      upload_token = options.upload_token || token.upload.call(this.sdk, options);
+
+  return rp({
+    method: 'POST',
+    url: host + '/bput/' + ctx + '/' + options.nextChunkOffset,
+    headers: {
+      'Content-Type': 'application/octet-stream',
+      'Content-Length': options.nextChunkSize,
+      'Authorization': 'UpToken ' + upload_token
+    },
+    json: true,
+    formData: {
+      nextChunkBinary: nextChunkBinary
+    }
+  });
+};
+/**
+ * 创建文件
+ * 官方文档：https://developer.qiniu.com/kodo/api/1287/mkfile
+ */
+File.prototype.mkfile = function(options){
+  if (!options || !options.fileSize || !options.ctxListSize ||
+      !options.lastCtxOfBlock
+  ) {
+    return Promise.reject('fileSize, ctxListSize, lastCtxOfBlock are required');
+  }
+  
+  let host = options.host || 'http://up.qiniu.com',
+      upload_token = options.upload_token || token.upload.call(this.sdk, options);
+
+  let url = host + '/mkfile/' + fileSize;
+
+  // 配置可选参数
+  if (options.key) url += '/key/' +  urlsafe_base64_encode(options.key);
+  if (options.mimeType) url += '/mimeType/' +  urlsafe_base64_encode(options.mimeType);
+  if (Array.isArray(options.encodedUserVars)) {
+    options.encodedUserVars.forEach(user_var => {
+      url += `/x:${user_var}/${urlsafe_base64_encode(user_var)}`;
+    });
+  }
+  return rp({
+    method: 'POST',
+    url: url,
+    headers: {
+      'Content-Type': 'text/plain',
+      'Content-Length': lastCtxOfBlock.length,
+      'Authorization': 'UpToken ' + upload_token
+    },
+    json: true,
+    formData: {
+      lastCtxOfBlock: lastCtxOfBlock
+    }
+  });
+};
+/**
+ * 封装了创建块、上传片、创建文件3个接口
+ */
+File.prototype.sliceUpload = function(){};
+/**
  * 资源复制
  * 官方文档：https://developer.qiniu.com/kodo/api/1254/copy
 */
