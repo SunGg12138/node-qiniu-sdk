@@ -123,13 +123,19 @@ SDK.prototype.getOperation = function(options){
       return '/prefetch/' + EncodedEntryURI(options.bucket, options.fileName);
     case 'chgm':
       var encodedEntryURI = EncodedEntryURI(options.bucket, options.fileName);
-      // var EncodedMimeType = EncodedEntryURI(options.bucket, options.fileName);
-      var path = '/chgm/' + encodedEntryURI;
-      options.mime && (path += '/mime/' + urlsafe_base64_encode(options.mime));
-      options.meta_key = options.meta_key || 'meta_key';
-      path += '/x-qn-meta-' + options.meta_key;
-            //  '/<EncodedMetaValue>';
-      options.mime && (path += '/cond/' + options.cond);
+      var operation = '/chgm/' + encodedEntryURI;
+      options.mimetype && (operation += '/mime/' + urlsafe_base64_encode(options.mimetype));
+
+      // /x-qn-meta-<meta_key>/<EncodedMetaValue>
+      if (Array.isArray(options.metas)) {
+        options.metas.forEach(meta => {
+          operation += '/x-qn-meta-' + meta.key + '/' + urlsafe_base64_encode(meta.value);
+        });
+      }
+      // /cond/<Encodedcond>
+      if (options.cond) operation += '/cond/' + urlsafe_base64_encode(options.cond);
+
+      return operation;
     default:
       throw new Error('Invalid _type: ' + options._type);
   }

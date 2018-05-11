@@ -20,7 +20,7 @@ mkblk   	         | 接口测试中             | 为后续分片上传创建一
 bput	             | 接口测试中             | 上传指定块的一片数据，具体数据量可根据现场环境调整，同一块的每片数据必须串行上传
 mkfile	           | 接口测试中             | 将上传好的所有数据块按指定顺序合并成一个资源文件
 stat     	         | file.stat            | 仅获取资源的 Metadata 信息，不返回资源内容
-chgm    	         | 接口测试中             | 修改文件的 MIME 类型信息
+chgm    	         | file.chgm            | 修改文件的 MIME 类型信息
 move    	         | file.move            | 将源空间的指定资源移动到目标空间，或在同一空间内对资源重命名
 copy    	         | file.copy            | 将指定资源复制为新命名资源
 delete   	         | file.delete          | 删除指定资源

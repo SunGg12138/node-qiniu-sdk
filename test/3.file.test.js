@@ -89,6 +89,15 @@ describe('File 相关方法测试', function(){
     })
     .catch(console.error);
   });
+  it('chgm 资源元信息修改', function(done){
+    qiniu.file(common.scope)
+    .chgm('image/png')
+    .then(function(result){
+      debug('资源元信息修改并返回：%s', JSON.stringify(result));
+      done();
+    })
+    .catch(console.error);
+  });
   it('fetch 第三方资源抓取', function(done){
     qiniu.file(common.bucketName + ':fetch.png')
     .fetch('https://www.baidu.com/img/bd_logo1.png?qua=high')

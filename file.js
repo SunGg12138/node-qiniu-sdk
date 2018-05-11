@@ -258,13 +258,18 @@ File.prototype.stat = function(){
   return this.sdk.rs(options);
 }
 /**
- * 资源元信息修改  待完善
+ * 资源元信息修改
  * 官方文档：https://developer.qiniu.com/kodo/api/1252/chgm
  */
-File.prototype.chgm = function(options){
-  options._type = 'chgm';
-  options.bucket = this.bucketName;
-  options.fileName = this.fileName;
+File.prototype.chgm = function(mimetype, metas, conds){
+  let options = {
+    _type: 'chgm',
+    bucket: this.bucketName,
+    fileName: this.fileName,
+    mimetype: mimetype,
+    metas: metas,
+    conds: conds
+  };
   options.path = this.sdk.getOperation(options);
   return this.sdk.rs(options);
 };

@@ -40,9 +40,9 @@ async function run (){
   // 官方文档：https://developer.qiniu.com/kodo/api/1308/stat
   await file.stat();
 
-  // 资源元信息修改，未通过测试用例
+  // 资源元信息修改
   // 官方文档：https://developer.qiniu.com/kodo/api/1252/chgm
-  await file.chgm();
+  await file.chgm('image/png');
   
   // 第三方资源抓取
   // 官方文档：https://developer.qiniu.com/kodo/api/1263/fetch
