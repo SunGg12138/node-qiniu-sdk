@@ -59,6 +59,7 @@ $ DEBUG=test mocha
 官网的一些文档不太友善，认真看
 
 1. 数据统计接口 [官方文档](https://developer.qiniu.com/kodo/api/3906/statistic-interface)
+2. 融合CDN [官方文档](https://developer.qiniu.com/fusion)
 
 ## 官方文档快捷方式
 

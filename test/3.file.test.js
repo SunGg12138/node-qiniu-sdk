@@ -26,7 +26,7 @@ describe('File 相关方法测试', function(){
   });
   it('upload 直传接口', function(done){
     qiniu.file(common.scope)
-    .upload(__filename)
+    .upload({ path: __filename })
     .then(function(result){
       debug('上传文件并在储存空间的名字为：%s并返回：%s', common.fileName, JSON.stringify(result));
       expect(result).to.be.an('object');

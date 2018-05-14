@@ -27,7 +27,7 @@ describe('自定义扩展方法测试', function(){
   });
   it('sliceUpload分片上传', function(done){
     qiniu.file(common.scope)
-    .sliceUpload(__dirname + '/resource/sliceUpload.test.zip')
+    .sliceUpload({ path: __dirname + '/resource/sliceUpload.test.zip' })
     .then(function(result){
       debug('sliceUp分片上传并返回：%s', JSON.stringify(result));
       expect(result).to.be.an('object');

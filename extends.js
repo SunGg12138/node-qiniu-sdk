@@ -16,12 +16,7 @@ module.exports.File = {
    */
   sliceUpload: function(options){
     if (!options) return Promise.reject(new Error('options param is required'));
-    if (typeof options === 'object') {
-      if (!options.path) return Promise.reject(new Error('options.path is required'));
-    } else {
-      let path = options;
-      options = { path: path };
-    }
+    if (!options.stream && !options.path) return Promise.reject(new Error('options.stream or options.path has at least one'));
 
     // 附加属性
     options.bucketName = this.bucketName;
@@ -29,7 +24,7 @@ module.exports.File = {
     options.key = this.fileName;
     options.token = token.upload.call(this.sdk, options);
 
-    let readStream = fs.createReadStream(options.path),  // 可读流
+    let readStream = options.stream || fs.createReadStream(options.path),  // 可读流
         buf = null,  // 当前读取的buff总数据
         readMaxSize = 4194304,  // 官网说了4mb，4194304 = 4 * 1024 * 1024
         fileSize = 0, // 文件大小

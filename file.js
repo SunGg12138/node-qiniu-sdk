@@ -27,15 +27,10 @@ function File(scope, sdk){
  */
 File.prototype.upload = function(options){
   if (!options) return Promise.reject(new Error('options param is required'));
-  if (typeof options === 'object') {
-    if (!options.path) return Promise.reject(new Error('options.path is required'));
-  } else {
-    let path = options;
-    options = { path: path };
-  }
+  if (!options.stream && !options.path) return Promise.reject(new Error('options.stream or options.path has at least one'));
 
   // 附加属性
-  options.file = fs.createReadStream(options.path);
+  options.file = options.stream || fs.createReadStream(options.path);
   options.scope = this.scope;
   options.key = this.fileName;
   options.fileName = this.fileName;
