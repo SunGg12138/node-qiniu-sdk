@@ -1,6 +1,8 @@
+const fs = require('fs');
 const File = require('./file');
 const Bucket = require('./bucket');
 const token = require('./lib/token');
+const request = require('request');
 const rp = require('request-promise');
 const querystring = require('querystring');
 const EncodedEntryURI = require('./lib/EncodedEntryURI');
@@ -91,6 +93,35 @@ SDK.prototype.batch = function(options){
   }
 
   return this.rs(options);
+};
+/**
+ * 下载资源
+ * 官方文档：https://developer.qiniu.com/kodo/manual/1232/download-process
+ * url: 下载的链接
+ * path: 本地的路径
+ * range: 分片下载
+*/
+SDK.prototype.download = function(url, path, range){
+  let RealDownloadUrl = token.download.call(this, { url: url });
+
+  let options = {
+    method: 'GET',
+    url: RealDownloadUrl
+  };
+
+  // 分片下载
+  if (range) {
+    options.headers = {
+      'Range': `bytes=${range.start}-${range.end}`
+    };
+  }
+  
+  return new Promise((resolve, reject) => {
+    const writeStream = fs.createWriteStream(path);
+    writeStream.on('finish', resolve);
+    writeStream.on('error', reject);
+    request(options).on('error', reject).pipe(writeStream);
+  });
 };
 /**
  * Tool: 获取资源操作指令，只针对可批量操作的功能

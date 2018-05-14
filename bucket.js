@@ -6,19 +6,20 @@ module.exports = Bucket;
 function Bucket(bucketName, sdk){
   this.bucketName = bucketName;
   this.sdk = sdk;
+
+  // 默认的区域为：z0(华东)
+  this.zone = 'z0';
 }
 /**
  * 创建 Bucket
  * 官方文档：https://developer.qiniu.com/kodo/api/1382/mkbucketv2
 */
-Bucket.prototype.mk = function(region){
-  // 默认是华东地区
-  region = region || 'z0';
+Bucket.prototype.mk = function(){
 
   let EncodedBucketName = urlsafe_base64_encode(this.bucketName);
 
   let options = {
-    path: '/mkbucketv2/' + EncodedBucketName + '/region/' + region
+    path: '/mkbucketv2/' + EncodedBucketName + '/region/' + this.zone
   };
 
   return this.sdk.rs(options);

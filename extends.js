@@ -1,4 +1,5 @@
 const fs = require('fs');
+const Zone = require('./zone');
 const debug = require('debug')('qiniu-sdk');
 const token = require('./lib/token');
 const urlsafe_base64_encode = require('./lib/urlsafe_base64_encode');
@@ -22,18 +23,18 @@ module.exports.File = {
       options = { path: path };
     }
 
-    options.bucket = this.bucketName;
+    // 附加属性
+    options.bucketName = this.bucketName;
     options.fileName = this.fileName;
     options.key = this.fileName;
     options.token = token.upload.call(this.sdk, options);
 
-    // 附加属性
     let readStream = fs.createReadStream(options.path),  // 可读流
         buf = null,  // 当前读取的buff总数据
         readMaxSize = 4194304,  // 官网说了4mb，4194304 = 4 * 1024 * 1024
         fileSize = 0, // 文件大小
         bufSize = 0,  // 当前读取的buff的长度
-        host = options.host || 'http://up.qiniu.com',
+        host = options.host || 'http://up-' + this.zone + '.qiniu.com',
         isReadEnd = false,  // 标记是否读完了
         ctxs = [],  // 储存所有的上传文件后的ctx
         result; // 每次请求响应的结果
@@ -125,10 +126,27 @@ module.exports.File = {
         }
       });
     });
+  },
+
+  // 切换区域
+  zone: function(zone){
+    if (!Zone.zones.includes(zone)) {
+      throw new Error('七牛云没有这个区域');
+    }
+    this.zone = zone;
+    return this;
   }
 };
 
 // 扩展Bucket
 module.exports.Bucket = {
-  
+
+  // 切换区域
+  zone: function(zone){
+    if (!Zone.zones.includes(zone)) {
+      throw new Error('七牛云没有这个区域');
+    }
+    this.zone = zone;
+    return this;
+  }
 };

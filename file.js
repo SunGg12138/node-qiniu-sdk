@@ -16,6 +16,9 @@ function File(scope, sdk){
   this.scope = scope;
   this.sdk = sdk;
   this.deadline = null;
+
+  // 默认的区域为：z0(华东)
+  this.zone = 'z0';
 }
 /**
  * 直传接口
@@ -33,32 +36,22 @@ File.prototype.upload = function(options){
 
   // 附加属性
   options.file = fs.createReadStream(options.path);
-  options.bucket = this.bucketName;
-  options.key = options.fileName = this.fileName;
+  options.scope = this.scope;
+  options.key = this.fileName;
+  options.fileName = this.fileName;
   options.token = token.upload.call(this.sdk, options);
 
-  // 发送请求
-  return rp({
+  let request_options = {
     method: 'POST',
     url: 'http://up.qiniu.com',
     formData: options,
     json: true
-  });
-};
-/**
- * 删除接口
- * 官方文档：https://developer.qiniu.com/kodo/api/1257/delete
- */
-File.prototype.delete = function(){
-
-  let options = {
-    _type: 'delete',
-    bucket: this.bucketName,
-    fileName: this.fileName
   };
-  options.path = this.sdk.getOperation(options);
 
-  return this.sdk.rs(options);
+  debug('upload请求，请求参数：url=%s key=%s upload_token=%s', request_options.url, options.key, token);
+
+  // 发送请求
+  return rp(request_options);
 };
 /**
  * 创建块
@@ -68,11 +61,14 @@ File.prototype.mkblk = function(options){
   if (!options || !options.firstChunkBinary || !options.firstChunkSize) {
     return Promise.reject('firstChunkBinary and firstChunkSize are required');
   }
-  options.scope = options.scope || this.scope;
-
-  let host = options.host || 'http://up.qiniu.com',
-      blockSize = options.blockSize || 4194304,
-      upload_token = options.upload_token || token.upload.call(this.sdk || null, options);
+  
+  let host = options.host || 'http://up-' + this.zone + '.qiniu.com',
+      blockSize = options.blockSize || 4194304;
+  
+  if (!options.upload_token) {
+    options.scope = this.scope;
+    options.upload_token = token.upload.call(this.sdk, options);
+  }
 
   let request_options = {
     method: 'POST',
@@ -80,7 +76,7 @@ File.prototype.mkblk = function(options){
     headers: {
       'Content-Type': 'application/octet-stream',
       'Content-Length': options.firstChunkSize,
-      'Authorization': 'UpToken ' + upload_token
+      'Authorization': 'UpToken ' + options.upload_token
     },
     json: true,
     formData: {
@@ -88,7 +84,7 @@ File.prototype.mkblk = function(options){
     }
   };
 
-  debug('mkblk请求，请求参数：url=%s upload_token=%s', request_options.url, upload_token);
+  debug('mkblk请求，请求参数：url=%s upload_token=%s', request_options.url, options.upload_token);
 
   return rp(request_options);
 };
@@ -102,10 +98,14 @@ File.prototype.bput = function(options){
   ) {
     return Promise.reject('ctx, nextChunkOffset, nextChunkBinary, nextChunkSize are required');
   }
-  let host = options.host || 'http://up.qiniu.com',
-      upload_token = options.upload_token || token.upload.call(this.sdk, options);
+  let host = options.host || 'http://up-' + this.zone + '.qiniu.com';
 
-  return rp({
+  if (!options.upload_token) {
+    options.scope = this.scope;
+    options.upload_token = token.upload.call(this.sdk, options);
+  }
+  
+  let request_options = {
     method: 'POST',
     url: host + '/bput/' + ctx + '/' + options.nextChunkOffset,
     headers: {
@@ -117,7 +117,11 @@ File.prototype.bput = function(options){
     formData: {
       nextChunkBinary: nextChunkBinary
     }
-  });
+  };
+
+  debug('bput请求，请求参数：url=%s upload_token=%s', request_options.url, options.upload_token);
+
+  return rp(request_options);
 };
 /**
  * 创建文件
@@ -128,10 +132,14 @@ File.prototype.mkfile = function(options){
     return Promise.reject('fileSize, ctxListSize, lastCtxOfBlock are required');
   }
   
-  let host = options.host || 'http://up.qiniu.com',
-      upload_token = options.upload_token || token.upload.call(this.sdk, options);
+  let host = options.host || 'http://up-' + this.zone + '.qiniu.com';
 
   let url = host + '/mkfile/' + options.fileSize;
+
+  if (!options.upload_token) {
+    options.scope = this.scope;
+    options.upload_token = token.upload.call(this.sdk, options);
+  }
 
   // 配置可选参数
   if (options.key) url += '/key/' +  urlsafe_base64_encode(options.key);
@@ -148,13 +156,13 @@ File.prototype.mkfile = function(options){
     headers: {
       'Content-Type': 'text/plain',
       'Content-Length': options.lastCtxOfBlock.length,
-      'Authorization': 'UpToken ' + upload_token
+      'Authorization': 'UpToken ' + options.upload_token
     },
     json: true,
     body: options.lastCtxOfBlock
   };
 
-  debug('mkfile请求，请求参数：url=%s key=%s upload_token=%s', request_options.url, options.key, upload_token);
+  debug('mkfile请求，请求参数：url=%s key=%s upload_token=%s', request_options.url, options.key, options.upload_token);
 
   return rp(request_options);
 };
@@ -171,6 +179,9 @@ File.prototype.copy = function(dest, isForce){
     force: !!isForce
   };
   options.path = this.sdk.getOperation(options);
+
+  debug('copy请求，请求参数：bucket=%s fileName=%s dest=%s', this.bucketName, this.fileName, options.dest);
+
   return this.sdk.rs(options);
 };
 /**
@@ -186,6 +197,9 @@ File.prototype.move = function(dest, isForce){
     force: !!isForce
   };
   options.path = this.sdk.getOperation(options);
+
+  debug('move请求，请求参数：bucket=%s fileName=%s dest=%s', this.bucketName, this.fileName, options.dest);
+
   return this.sdk.rs(options);
 };
 /**
@@ -206,6 +220,8 @@ File.prototype.chstatus = function(status){
   };
   options.path = this.sdk.getOperation(options);
 
+  debug('chstatus请求，请求参数：bucket=%s fileName=%s status=%s', this.bucketName, this.fileName, options.status);
+
   return this.sdk.rs(options);
 };
 /**
@@ -221,6 +237,8 @@ File.prototype.deleteAfterDays = function(deleteAfterDays){
     deleteAfterDays: deleteAfterDays
   };
   options.path = this.sdk.getOperation(options);
+
+  debug('deleteAfterDays请求，请求参数：bucket=%s fileName=%s deleteAfterDays=%s', this.bucketName, this.fileName, options.deleteAfterDays);
 
   return this.sdk.rs(options);
 };
@@ -243,6 +261,8 @@ File.prototype.chtype = function(type){
   };
   options.path = this.sdk.getOperation(options);
 
+  debug('chtype请求，请求参数：bucket=%s fileName=%s type=%s', this.bucketName, this.fileName, options.type);
+
   return this.sdk.rs(options);
 };
 /**
@@ -256,6 +276,8 @@ File.prototype.stat = function(){
     fileName: this.fileName
   };
   options.path = this.sdk.getOperation(options);
+
+  debug('stat请求，请求参数：bucket=%s fileName=%s', this.bucketName, this.fileName);
 
   return this.sdk.rs(options);
 }
@@ -273,6 +295,9 @@ File.prototype.chgm = function(mimetype, metas, conds){
     conds: conds
   };
   options.path = this.sdk.getOperation(options);
+
+  debug('chgm请求，请求参数：bucket=%s fileName=%s mimetype=%s', this.bucketName, this.fileName, options.mimetype);
+
   return this.sdk.rs(options);
 };
 /**
@@ -289,6 +314,8 @@ File.prototype.fetch = function(url){
         host: 'http://iovip.qbox.me'
       };
 
+  debug('chgm请求，请求参数：bucket=%s fileName=%s url=%s', this.bucketName, this.fileName, url);
+
   return this.sdk.rs(options);
 };
 /**
@@ -303,6 +330,9 @@ File.prototype.prefetch = function(){
     fileName: this.fileName
   };
   options.path = this.sdk.getOperation(options);
+
+  debug('prefetch请求，请求参数：bucket=%s fileName=%s', this.bucketName, this.fileName);
+
   return this.sdk.rs(options);
 };
 /**
@@ -317,6 +347,8 @@ File.prototype.delete = function(){
     fileName: this.fileName
   };
   options.path = this.sdk.getOperation(options);
+
+  debug('delete请求，请求参数：bucket=%s fileName=%s', this.bucketName, this.fileName);
 
   return this.sdk.rs(options);
 };

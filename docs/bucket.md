@@ -6,8 +6,8 @@ const qiniu = new Qiniu('<Your AccessKey>', '<Your SecretKey>');
 
 async function run (){
 
-  // 创建可管理的储存空间对象
-  const bucket = qiniu.bucket('<存储空间名称>');
+  // 创建可管理的储存空间对象并设置区域，区域默认是z0
+  const bucket = qiniu.bucket('<存储空间名称>').zone('z1');
 
   // 如果你没有该名称的储存空间，使用mk方法会创建一个
   // 官方文档：https://developer.qiniu.com/kodo/api/1382/mkbucketv2

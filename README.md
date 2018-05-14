@@ -50,7 +50,7 @@ await file.delete();
 # tip:别忘了把qiniu.config.default.json的名字改成qiniu.config.json
 $ mocha
 
-# 如果想看返回的数据
+# 如果想看返回的数据信息也可以加上DEBUG
 $ DEBUG=test mocha
 ```
 
@@ -58,8 +58,7 @@ $ DEBUG=test mocha
 
 官网的一些文档不太友善，认真看
 
-1. 分片上传 [官方文档](https://developer.qiniu.com/kodo/manual/1650/chunked-upload)
-2. 数据统计接口 [官方文档](https://developer.qiniu.com/kodo/api/3906/statistic-interface)
+1. 数据统计接口 [官方文档](https://developer.qiniu.com/kodo/api/3906/statistic-interface)
 
 ## 官方文档快捷方式
 
