@@ -16,9 +16,9 @@ mkbucketv2	       | bucket.mk            | 创建存储空间，同时绑定一�
 domain/list	       | bucket.domain        | 获取一个空间绑定的域名列表
 drop	             | bucket.drop          | 删除指定存储空间
 upload   	         | file.upload          | 用于在一次 HTTP 会话中上传单一的一个文件
-mkblk   	         | 接口测试中             | 为后续分片上传创建一个新的块，同时上传第一片数据
+mkblk   	         | file.mkblk           | 为后续分片上传创建一个新的块，同时上传第一片数据
 bput	             | 接口测试中             | 上传指定块的一片数据，具体数据量可根据现场环境调整，同一块的每片数据必须串行上传
-mkfile	           | 接口测试中             | 将上传好的所有数据块按指定顺序合并成一个资源文件
+mkfile	           | file.mkfile          | 将上传好的所有数据块按指定顺序合并成一个资源文件
 stat     	         | file.stat            | 仅获取资源的 Metadata 信息，不返回资源内容
 chgm    	         | file.chgm            | 修改文件的 MIME 类型信息
 move    	         | file.move            | 将源空间的指定资源移动到目标空间，或在同一空间内对资源重命名
@@ -43,4 +43,4 @@ private            | bucket.private       | 设置 Bucket 访问权限，目前 
 
 接口                           | 说明 
 ------------------------------|----------------------------------
- file.sliceUpload（待完善）     | 封装了创建块、上传片、创建文件3个接口来分片上传文件
+file.sliceUpload              | 封装了创建块、创建文件2个接口来分片上传文件

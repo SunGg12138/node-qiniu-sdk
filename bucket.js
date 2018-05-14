@@ -1,3 +1,4 @@
+const Extends = require('./extends');
 const urlsafe_base64_encode = require('./lib/urlsafe_base64_encode');
 
 module.exports = Bucket;
@@ -108,3 +109,6 @@ Bucket.prototype.drop = function(){
   };
   return this.sdk.rs(options);
 };
+
+// 自定义扩展接口
+Object.assign(Bucket.prototype, Extends.Bucket);

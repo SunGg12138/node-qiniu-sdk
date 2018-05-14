@@ -55,6 +55,11 @@ async function run (){
   // 删除接口
   // 官方文档：https://developer.qiniu.com/kodo/api/1257/delete
   await file.delete();
+
+  // 分片上传
+  // 这个是封装的接口，当读取大文件的时候使用
+  // 官方文档：https://developer.qiniu.com/kodo/manual/1650/chunked-upload
+  await file.sliceUpload({ path: '<本地文件路径>' });
 }
 
 run();

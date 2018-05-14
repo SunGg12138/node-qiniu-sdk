@@ -1,7 +1,8 @@
 const fs = require('fs')
 const path = require('path')
 const token = require('./lib/token');
-const debug = require('debug')('dev');
+const Extends = require('./extends');
+const debug = require('debug')('qiniu-sdk');
 const rp = require('request-promise');
 const EncodedEntryURI = require('./lib/EncodedEntryURI');
 const urlsafe_base64_encode = require('./lib/urlsafe_base64_encode');
@@ -67,13 +68,13 @@ File.prototype.mkblk = function(options){
   if (!options || !options.firstChunkBinary || !options.firstChunkSize) {
     return Promise.reject('firstChunkBinary and firstChunkSize are required');
   }
-  options.scope = this.scope;
+  options.scope = options.scope || this.scope;
 
   let host = options.host || 'http://up.qiniu.com',
       blockSize = options.blockSize || 4194304,
-      upload_token = options.upload_token || token.upload.call(this.sdk, options);
+      upload_token = options.upload_token || token.upload.call(this.sdk || null, options);
 
-  return rp({
+  let request_options = {
     method: 'POST',
     url: host + '/mkblk/' + blockSize,
     headers: {
@@ -85,7 +86,11 @@ File.prototype.mkblk = function(options){
     formData: {
       firstChunkBinary: options.firstChunkBinary,
     }
-  });
+  };
+
+  debug('mkblk请求，请求参数：url=%s upload_token=%s', request_options.url, upload_token);
+
+  return rp(request_options);
 };
 /**
  * 上传片
@@ -119,16 +124,14 @@ File.prototype.bput = function(options){
  * 官方文档：https://developer.qiniu.com/kodo/api/1287/mkfile
  */
 File.prototype.mkfile = function(options){
-  if (!options || !options.fileSize || !options.ctxListSize ||
-      !options.lastCtxOfBlock
-  ) {
+  if (!options || !options.fileSize || !options.lastCtxOfBlock) {
     return Promise.reject('fileSize, ctxListSize, lastCtxOfBlock are required');
   }
   
   let host = options.host || 'http://up.qiniu.com',
       upload_token = options.upload_token || token.upload.call(this.sdk, options);
 
-  let url = host + '/mkfile/' + fileSize;
+  let url = host + '/mkfile/' + options.fileSize;
 
   // 配置可选参数
   if (options.key) url += '/key/' +  urlsafe_base64_encode(options.key);
@@ -138,24 +141,23 @@ File.prototype.mkfile = function(options){
       url += `/x:${user_var}/${urlsafe_base64_encode(user_var)}`;
     });
   }
-  return rp({
+
+  let request_options = {
     method: 'POST',
     url: url,
     headers: {
       'Content-Type': 'text/plain',
-      'Content-Length': lastCtxOfBlock.length,
+      'Content-Length': options.lastCtxOfBlock.length,
       'Authorization': 'UpToken ' + upload_token
     },
     json: true,
-    formData: {
-      lastCtxOfBlock: lastCtxOfBlock
-    }
-  });
+    body: options.lastCtxOfBlock
+  };
+
+  debug('mkfile请求，请求参数：url=%s key=%s upload_token=%s', request_options.url, options.key, upload_token);
+
+  return rp(request_options);
 };
-/**
- * 封装了创建块、上传片、创建文件3个接口
- */
-File.prototype.sliceUpload = function(){};
 /**
  * 资源复制
  * 官方文档：https://developer.qiniu.com/kodo/api/1254/copy
@@ -318,3 +320,6 @@ File.prototype.delete = function(){
 
   return this.sdk.rs(options);
 };
+
+// 自定义扩展接口
+Object.assign(File.prototype, Extends.File);
