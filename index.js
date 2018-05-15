@@ -1,6 +1,7 @@
 const fs = require('fs');
 const File = require('./file');
 const Bucket = require('./bucket');
+const Extends = require('./extends');
 const token = require('./lib/token');
 const request = require('request');
 const rp = require('request-promise');
@@ -176,7 +177,7 @@ SDK.prototype.getOperation = function(options){
  */
 SDK.prototype.rs = function(options){
   // 生成管理凭证
-  let access_token = token.access.call(this, options);
+  let access_token = options.access_token || token.access.call(this, options);
 
   // 构造请求配置
   let request_options = {
@@ -197,3 +198,6 @@ SDK.prototype.rs = function(options){
   // 发送请求
   return rp(request_options);
 };
+
+// 自定义扩展接口
+Object.assign(SDK.prototype, Extends.sdk);

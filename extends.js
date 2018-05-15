@@ -15,7 +15,9 @@ module.exports.File = {
    * 封装分片上传
    */
   sliceUpload: function(options){
-    if (!options) return Promise.reject(new Error('options param is required'));
+    if (typeof options === 'string') options = { path: options };
+    else if (!options) return Promise.reject(new Error('options param is required'));
+    
     if (!options.stream && !options.path) return Promise.reject(new Error('options.stream or options.path has at least one'));
 
     // 附加属性
@@ -144,4 +146,8 @@ module.exports.Bucket = {
     this.zone = zone;
     return this;
   }
+};
+
+// 扩展sdk
+module.exports.sdk = {
 };

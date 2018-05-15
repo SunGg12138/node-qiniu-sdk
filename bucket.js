@@ -28,7 +28,7 @@ Bucket.prototype.mk = function(){
  * 设置 Bucket 镜像源
  * https://developer.qiniu.com/kodo/api/3966/bucket-image-source
  * @param {String} srcSiteUrl 镜像源的访问域名
- * @param {String} host 回源时使用的Host头部值  官方文档不全暂不支持
+ * @param {String} host 回源时使用的Host头部值
  */
 Bucket.prototype.image = function(srcSiteUrl, host){
   let EncodedSrcSiteUrl = urlsafe_base64_encode(srcSiteUrl);
@@ -37,10 +37,10 @@ Bucket.prototype.image = function(srcSiteUrl, host){
     path: '/image/' + this.bucketName + '/from/' + EncodedSrcSiteUrl
   };
   // 官方文档不全暂不支持
-  // if (host) {
-  //   let EncodedHost = urlsafe_base64_encode(host);
-  //   options.path += '/host/' + EncodedHost;
-  // }
+  if (host) {
+    let EncodedHost = urlsafe_base64_encode(host);
+    options.path += '/host/' + EncodedHost;
+  }
   return this.sdk.rs(options);
 };
 /**
@@ -105,7 +105,6 @@ Bucket.prototype.list = function(options = {}){
  */
 Bucket.prototype.drop = function(){
   let options = {
-    host: 'http://rs.qiniu.com',
     path: '/drop/' + this.bucketName
   };
   return this.sdk.rs(options);

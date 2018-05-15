@@ -24,6 +24,26 @@ describe('File 相关方法测试', function(){
     })
     .catch(console.error);
   });
+  it('upload 使用流上传', function(done){
+    qiniu.file(common.bucketName + ':logo.png')
+    .upload({ stream: require('request').get('https://www.baidu.com/img/bd_logo1.png?qua=high') })
+    .then(function(result){
+      debug('使用流上传并返回：%s', JSON.stringify(result));
+      expect(result).to.be.an('object');
+      done();
+    })
+    .catch(console.error);
+  });
+  it('upload 上传文本', function(done){
+    qiniu.file(common.bucketName + ':upload.txt.js')
+    .upload({ txt: 'var a = 12, b = 13, c = 18;' })
+    .then(function(result){
+      debug('上传文本并返回：%s', JSON.stringify(result));
+      expect(result).to.be.an('object');
+      done();
+    })
+    .catch(console.error);
+  });
   it('upload 直传接口', function(done){
     qiniu.file(common.scope)
     .upload({ path: __filename })
@@ -100,7 +120,7 @@ describe('File 相关方法测试', function(){
   });
   it('fetch 第三方资源抓取', function(done){
     qiniu.file(common.bucketName + ':fetch.png')
-    .fetch('https://www.baidu.com/img/bd_logo1.png?qua=high')
+    .fetch('http://119.75.213.61/img/bd_logo1.png?qua=high')
     .then(function(result){
       debug('第三方资源抓取并返回：%s', JSON.stringify(result));
       expect(result).to.be.an('object');

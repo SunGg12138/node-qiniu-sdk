@@ -26,11 +26,20 @@ function File(scope, sdk){
  * @param {Object|String} options 文件上传配置或完整路径
  */
 File.prototype.upload = function(options){
-  if (!options) return Promise.reject(new Error('options param is required'));
-  if (!options.stream && !options.path) return Promise.reject(new Error('options.stream or options.path has at least one'));
+  if (typeof options === 'string') options = { path: options };
+  else if (!options) return Promise.reject(new Error('options param is required'));
+  
+  if (!options.stream && !options.path && !options.txt) return Promise.reject(new Error('stream,path and txt has at least one'));
 
   // 附加属性
-  options.file = options.stream || fs.createReadStream(options.path);
+  if (options.stream || options.path) {
+    // 流处理
+    options.file = options.stream || fs.createReadStream(options.path);
+  } else {
+    // 把文本转换成二进制数据
+    options.encoding = options.encoding || 'utf8';
+    options.file = Buffer(options.txt, options.encoding);
+  }
   options.scope = this.scope;
   options.key = this.fileName;
   options.fileName = this.fileName;
@@ -220,7 +229,7 @@ File.prototype.chstatus = function(status){
   return this.sdk.rs(options);
 };
 /**
- * 更新文件生命周期，在deleteAfterDays天会被删除，0表示取消生命周期  没有报错，但是控制台无生命周期
+ * 更新文件生命周期，在deleteAfterDays天会被删除，0表示取消生命周期
  * 官方文档：https://developer.qiniu.com/kodo/api/1732/update-file-lifecycle
  */
 File.prototype.deleteAfterDays = function(deleteAfterDays){
