@@ -54,9 +54,22 @@ $ mocha
 $ DEBUG=test mocha
 ```
 
-## 先说哪些接口还没实现吧，有时间再实现或大家帮帮忙
+## package.json
 
-官网的一些文档不太友善，认真看
+由于request在post提交文本时，也会JSON.stringify，所以会多一对“"”分号，在某些操作会出现异常
+现在的request引用的是我fork后修改过的，request模块我commit了，等待merge
+
+```javascript
+...
+"dependencies": {
+  "debug": "^3.1.0",
+  "request": "https://github.com/SunGg12138/request.git",
+  "request-promise": "^4.2.2"
+},
+...
+```
+
+## 先说哪些接口还没实现吧，有时间再实现或大家帮帮忙
 
 1. 数据统计接口 [官方文档](https://developer.qiniu.com/kodo/api/3906/statistic-interface)
 2. 融合CDN [官方文档](https://developer.qiniu.com/fusion)
