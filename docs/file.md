@@ -94,6 +94,7 @@ options对象 有4个参数属性：
   - encoding: 编码的种类与Buffer支持的种类相同（默认：'utf8'）
 
 path,stream,txt这三个参数至少要有一个，优先级从左到右，encoding只有txt参数起作用时才会有效
+
 当options不是对象而是字符串时，会把它当做path
 
 ```javascript
@@ -263,6 +264,7 @@ options对象 有2个参数属性：
   - stream: 上传文件的流
 
 path,stream这两个参数至少要有一个，优先级从左到右
+
 当options不是对象而是字符串时，会把它当做path
 
 ```javascript

@@ -72,7 +72,7 @@ $ DEBUG=test mocha
 ## 先说哪些接口还没实现吧，有时间再实现或大家帮帮忙
 
 1. 数据统计接口 [官方文档](https://developer.qiniu.com/kodo/api/3906/statistic-interface)
-2. 融合CDN [官方文档](https://developer.qiniu.com/fusion)
+2. 融合CDN/域名管理 [官方文档](https://developer.qiniu.com/fusion)
 
 ## 官方文档快捷方式
 

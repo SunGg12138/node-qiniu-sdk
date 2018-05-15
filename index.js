@@ -1,5 +1,6 @@
 const fs = require('fs');
 const File = require('./file');
+const CDN = require('./cdn');
 const Bucket = require('./bucket');
 const Extends = require('./extends');
 const token = require('./lib/token');
@@ -28,6 +29,10 @@ SDK.prototype.bucket = function(bucketName){
 // 创建File类
 SDK.prototype.file = function(scope){
   return new File(scope, this);
+};
+// 创建CDN类
+SDK.prototype.cdn = function(scope){
+  return new CDN(this);
 };
 /**
  * 获取 Bucket 列表
@@ -88,7 +93,7 @@ SDK.prototype.batch = function(options){
     let ops = options.ops.map(item => {
       return this.getOperation(item);
     });
-    options.body = querystring.stringify({op: ops});
+    options.form = options.body = querystring.stringify({op: ops});
   } catch (error) {
     return Promise.reject(error);
   }
@@ -188,7 +193,14 @@ SDK.prototype.rs = function(options){
     },
     json: true,
   };
-  request_options.form = (options.body || options.form) || {};
+
+  if (options.form) {
+    request_options.form = options.form
+  } else if (options.body) {
+    request_options.body = typeof options.body === 'string'? options.body : JSON.stringify(options.body);
+  } else {
+    request_options.form = {};
+  }
   
   // 设置content-type
   if (options['content-type']) {

@@ -151,3 +151,7 @@ module.exports.Bucket = {
 // 扩展sdk
 module.exports.sdk = {
 };
+
+// 扩展CDN
+module.exports.CDN = {
+};
