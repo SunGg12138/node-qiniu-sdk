@@ -35,23 +35,11 @@ describe('自定义扩展方法测试', function(){
     })
     .catch(console.error);
   });
-  it('sliceUpload分片上传', function(done){
+  it('sliceUpload并发分片上传', function(done){
     qiniu.file(common.scope)
-    .sliceUpload(__dirname + '/resource/sliceUpload.test.zip')
+    .sliceUpload({ path: __dirname + '/resource/sliceUpload.test.zip', max: 2 })
     .then(function(result){
-      debug('sliceUp分片上传并返回：%s', JSON.stringify(result));
-      expect(result).to.be.an('object');
-      expect(result.hash).to.be.a('string');
-      expect(result.key).to.be.a('string');
-      done();
-    })
-    .catch(console.error);
-  });
-  it('concurrentSliceUpload并发分片上传', function(done){
-    qiniu.file(common.scope)
-    .concurrentSliceUpload({ path: __dirname + '/resource/sliceUpload.test.zip', max: 2 })
-    .then(function(result){
-      debug('concurrentSliceUpload并发分片上传并返回：%s', JSON.stringify(result));
+      debug('sliceUpload并发分片上传并返回：%s', JSON.stringify(result));
       expect(result).to.be.an('object');
       expect(result.hash).to.be.a('string');
       expect(result.key).to.be.a('string');
