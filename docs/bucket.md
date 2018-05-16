@@ -64,6 +64,8 @@ bucket.zone('z1');
 
 ### bucket.mk() 创建bucket
 
+[官方文档](https://developer.qiniu.com/kodo/api/1382/mkbucketv2)
+
 没有参数
 
 ```javascript
@@ -75,6 +77,8 @@ await bucket.mk();
 ```
 
 ### bucket.image(srcSiteUrl, host) 设置Bucket镜像源
+
+[官方文档](https://developer.qiniu.com/kodo/api/3966/bucket-image-source)
 
 有2个参数：
   - srcSiteUrl(必选): String类型，镜像源的访问域名
@@ -90,6 +94,8 @@ await bucket.image('http://p0vquqra2.bkt.clouddn.com');
 
 ### bucket.private(private) 设置Bucket访问权限
 
+[官方文档](https://developer.qiniu.com/kodo/api/3946/put-bucket-acl)
+
 有1个参数：
   - private(必选): 0或1，0 公开、1 私有
 
@@ -103,6 +109,8 @@ await bucket.private(1);
 
 ### bucket.domain() 获取Bucket空间域名
 
+[官方文档](https://developer.qiniu.com/kodo/api/3949/get-the-bucket-space-domain)
+
 没有参数
 
 ```javascript
@@ -114,6 +122,8 @@ await bucket.domain();
 ```
 
 ### bucket.list(options) 对区间进行资源列举
+
+[官方文档](https://developer.qiniu.com/kodo/api/1284/list)
 
 options有4个参数属性：
   - marker(可选): 上一次列举返回的位置标记，作为本次列举的起点信息。默认值为空字符串。
@@ -130,6 +140,8 @@ await bucket.list({ limit: 50 });
 ```
 
 ### bucket.drop() 删除区间
+
+[官方文档](https://developer.qiniu.com/kodo/api/1601/drop-bucket)
 
 没有参数
 

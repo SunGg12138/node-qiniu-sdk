@@ -72,7 +72,7 @@ await file.sliceUpload({ path: '<本地文件路径>', max: 5});
 有1个参数：
   - zone(必选): String类型，空间及文件的所在区域
 
-目前的区间z0, z1, z2, na0, as0，你可以在zone.js文件[查看详情](../zone.js)
+目前的区间z0, z1, z2, na0, as0，你可以在zone.js文件[查看详情](../lib/zone.js)
 
 zone方法不会返回promise，会直接返回File对象
 
@@ -86,6 +86,8 @@ file.zone('z1');
 ```
 
 ### file.upload(options) 上传文件或文本
+
+[官方文档](https://developer.qiniu.com/kodo/api/1312/upload)
 
 options对象 有4个参数属性：
   - path: String类型，表示上传文件的路径
@@ -116,6 +118,8 @@ await file.upload({ txt: 'var a = 12, b = 13, c = 18;', encoding: 'utf8' });
 
 ### file.copy(dest[, isForce]) 复制文件
 
+[官方文档](https://developer.qiniu.com/kodo/api/1254/copy)
+
 有2个参数：
   - dest(必选): String类型，表示copy后的新文件名字
   - isForce(可选): Boolean类型，表示是否强制copy，如果新文件名字重名，强制copy会覆盖原文件，非强制copy会报错（默认为false）
@@ -130,6 +134,8 @@ await file.copy('kk.js', true);
 ```
 
 ### file.move(dest[, isForce]) 资源移动／重命名
+
+[官方文档](https://developer.qiniu.com/kodo/api/1288/move)
 
 有2个参数：
   - dest(必选): String类型，表示move后的新文件名字
@@ -146,6 +152,8 @@ await file.move('kk.js', true);
 
 ### file.chstatus(status) 修改文件状态
 
+[官方文档](https://developer.qiniu.com/kodo/api/4173/modify-the-file-status)
+
 有1个参数：
   - status(必选): 0或1，表示修改后的文件状态，0表示启用；1表示禁用
 
@@ -159,6 +167,8 @@ await file.status(1);
 ```
 
 ### file.deleteAfterDays(deleteAfterDays) 更新文件生命周期
+
+[官方文档](https://developer.qiniu.com/kodo/api/1732/update-file-lifecycle)
 
 有1个参数：
   - deleteAfterDays(必选): 更新文件生命周期，在deleteAfterDays天会被删除，0表示取消生命周期
@@ -174,6 +184,8 @@ await file.deleteAfterDays(1);
 
 ### file.chtype(type) 修改文件存储类型
 
+[官方文档](https://developer.qiniu.com/kodo/api/3710/chtype)
+
 有1个参数：
   - type(必选): 0或1，修改文件存储类型，0 表示标准存储；1 表示低频存储
 
@@ -188,6 +200,8 @@ await file.chtype(1);
 
 ### file.stat() 资源元信息查询
 
+[官方文档](https://developer.qiniu.com/kodo/api/1308/stat)
+
 没有参数
 
 ```javascript
@@ -200,6 +214,8 @@ await file.stat();
 ```
 
 ### file.chgm(mimetype, metas, conds) 资源元信息修改
+
+[官方文档](https://developer.qiniu.com/kodo/api/1252/chgm)
 
 有3个参数：
   - mimetype(必选): String类型，修改后文件的资源元信息
@@ -217,6 +233,8 @@ await file.chgm('text/plain');
 
 ### file.fetch(url) 第三方资源抓取
 
+[官方文档](https://developer.qiniu.com/kodo/api/1263/fetch)
+
 有3个参数：
   - mimetype(必选): String类型，修改后文件的资源元信息
   - metas(可选): Array类型，自定义meta_key和metavalue，例如：[ {key: 'h1', value: 'hh'}, {key: 'h2', value: 'hhh'} ]
@@ -233,6 +251,8 @@ await file.fetch('http://119.75.213.61/img/bd_logo1.png?qua=high');
 
 ### file.prefetch() 镜像资源更新
 
+[官方文档](https://developer.qiniu.com/kodo/api/1293/prefetch)
+
 没有参数
 
 ```javascript
@@ -246,6 +266,8 @@ await file.prefetch();
 
 ### file.delete() 删除文件
 
+[官方文档](https://developer.qiniu.com/kodo/api/1257/delete)
+
 没有参数
 
 ```javascript
@@ -258,6 +280,8 @@ await file.delete();
 ```
 
 ### file.sliceUpload(options) 并发分片上传文件
+
+[官方文档](https://developer.qiniu.com/kodo/manual/1650/chunked-upload)
 
 options对象 有3个参数属性：
   - path: String类型，表示上传文件的路径

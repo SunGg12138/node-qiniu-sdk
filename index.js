@@ -1,14 +1,14 @@
 const fs = require('fs');
-const File = require('./file');
-const CDN = require('./cdn');
-const Bucket = require('./bucket');
-const Extends = require('./extends');
+const File = require('./lib/file');
+const CDN = require('./lib/cdn');
+const Bucket = require('./lib/bucket');
+const Extends = require('./lib/extends');
 const token = require('./lib/token');
 const request = require('request');
 const rp = require('request-promise');
 const querystring = require('querystring');
-const EncodedEntryURI = require('./lib/EncodedEntryURI');
-const urlsafe_base64_encode = require('./lib/urlsafe_base64_encode');
+const EncodedEntryURI = require('./lib/encrypt/EncodedEntryURI');
+const urlsafe_base64_encode = require('./lib/encrypt/urlsafe_base64_encode');
 
 module.exports = SDK;
 
@@ -210,6 +210,3 @@ SDK.prototype.rs = function(options){
   // 发送请求
   return rp(request_options);
 };
-
-// 自定义扩展接口
-Object.assign(SDK.prototype, Extends.sdk);
