@@ -35,9 +35,9 @@ module.exports.File = {
         isReadEnd = false,  // 标记是否读完了
         ctxs = [],  // 储存所有的上传文件后的ctx
         result; // 每次请求响应的结果
-    
+
     return new Promise((resolve, reject) => {
-      readStream.on('data', async (chunk) => {
+      readStream.on('data', (chunk) => {
         bufSize += chunk.length;
   
         // 合并buffer
@@ -47,82 +47,76 @@ module.exports.File = {
 
           debug('第%s块数据读完，size: %s', ctxs.length + 1, bufSize);
 
-          // 停止可读流，上传到七牛云
+          // 停止可读流，上传这部分到七牛云
           readStream.pause();
-  
-          // 增加文件大小
-          fileSize += bufSize;
-  
-          try {
-            // mkblk
-            result = await this.mkblk({
-              firstChunkBinary: buf,
-              firstChunkSize: bufSize,
-              blockSize: bufSize,
-              upload_token: options.token
-            });
-
-            // 储存ctx并初始化buf、bufSize
-            ctxs.push(result.ctx);
-            buf = null;
-            bufSize = 0;
-  
-            // 如果已经读完了准备七牛云合并文件操作，否则继续文件
-            if (isReadEnd) {
-              // 这是刚好读完的情况
-              result = await this.mkfile({
-                fileSize,
-                key: options.key,
-                lastCtxOfBlock: ctxs.join(','),
-                upload_token: options.token
-              });
-              resolve(result);
-            } else {
-              // 继续读
-              readStream.resume();
-            }
-          } catch (error) {
-            reject(error);
-          }
+          
+          // 上传这一块数据
+          uploadChunk.call(this, resolve, reject);
         }
       });
-      readStream.on('end', async () => {
+      readStream.on('end', () => {
         isReadEnd = true;
 
         debug('最后一块数据读完，size: %s', bufSize);
   
         // 如果读完了之后发现还有比4MB小的数据，说明这是最后一小块，需要上传
         if (bufSize > 0 && bufSize < readMaxSize) {
-  
-          // 增加文件大小
-          fileSize += bufSize;
-  
-          try {
-            // 把最后一小块上传
-            result = await this.mkblk({
-              blockSize: bufSize,
-              firstChunkBinary: buf,
-              firstChunkSize: bufSize,
-              upload_token: options.token
-            });
-
-            ctxs.push(result.ctx);
-  
-            // 创建文件
-            result = await this.mkfile({
-              fileSize,
-              key: options.key,
-              lastCtxOfBlock: ctxs.join(','),
-              upload_token: options.token
-            });
-  
-            resolve(result);
-          } catch (error) {
-            reject(error);
-          }
+          uploadChunk.call(this, resolve, reject);
         }
       });
     });
+
+    // 上传操作
+    async function uploadChunk(resolve, reject){
+      try {
+        // 有数据才会上传块
+        if (bufSize > 0) {
+
+          result = await this.mkblk({
+            firstChunkBinary: buf,
+            firstChunkSize: bufSize,
+            blockSize: bufSize,
+            upload_token: options.token
+          });
+
+          // 增加文件大小
+          fileSize += bufSize;
+
+          // 储存ctx并初始化buf、bufSize
+          ctxs.push(result.ctx);
+          buf = null;
+          bufSize = 0;
+        }
+
+        // 如果已经读完了准备七牛云合并文件操作，否则继续读取文件
+        if (isReadEnd) {
+          // 这是读完的情况
+          result = await this.mkfile({
+            fileSize,
+            key: options.key,
+            lastCtxOfBlock: ctxs.join(','),
+            upload_token: options.token
+          });
+          resolve(result);
+        } else {
+          // 继续读
+          readStream.resume();
+        }
+      } catch (error) {
+        if (
+          error.statusCode === 401 &&
+          error.error && 
+          (error.error.error === 'token out of date' || error.error.error.indexOf('token expired') > -1)
+        ) {
+          debug('token过期，重新获取token');
+          // 如果是token过期，重新生成token，继续上传
+          options.token = token.upload.call(this.sdk, options);
+          uploadChunk.call(this, resolve, reject);
+        } else {
+          reject(error);
+        }
+      }
+    }
   },
 
   // 切换区域
