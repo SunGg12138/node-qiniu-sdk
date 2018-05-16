@@ -49,8 +49,11 @@ await file.delete();
 # 格式与qiniu.config.default.json相同，你需要配置你的qiniu.config.json
 $ mocha
 
-# 如果想看返回的数据信息也可以加上DEBUG
+# 如果想看返回的数据信息可以加上DEBUG=test
 $ DEBUG=test mocha
+
+# 如果想看操作信息可以加上DEBUG=qiniu-sdk（例如：分片上传的步骤）
+$ DEBUG=qiniu-sdk mocha
 ```
 
 ## package.json

@@ -63,6 +63,11 @@ await file.delete();
 // 这个是封装的接口，当读取大文件的时候使用
 // 官方文档：https://developer.qiniu.com/kodo/manual/1650/chunked-upload
 await file.sliceUpload({ path: '<本地文件路径>' });
+
+// 并发分片上传
+// 这个是封装的接口，当读取大文件的时候使用
+// 官方文档：https://developer.qiniu.com/kodo/manual/1650/chunked-upload
+await file.concurrentSliceUpload({ path: '<本地文件路径>', max: 5});
 ```
 
 ## File 使用详情
@@ -257,7 +262,7 @@ const file = qiniu.file('<存储空间名称>:<文件名称>');
 await file.delete();
 ```
 
-### file.sliceUpload(options) 分片上传文件
+### file.sliceUpload(options) 分片上传文件（马上会被并发的分片上传取代）
 
 options对象 有2个参数属性：
   - path: String类型，表示上传文件的路径
@@ -279,4 +284,29 @@ await file.sliceUpload(__dirname + '/ll.mp4');
 
 // 使用流上传
 await file.sliceUpload({ stream: fs.createStream(__dirname + '/ll.mp4') });
+```
+
+### file.concurrentSliceUpload(options) 并发分片上传文件
+
+options对象 有3个参数属性：
+  - path: String类型，表示上传文件的路径
+  - stream: 上传文件的流
+  - max: Number类型，最大并发量
+
+path,stream这两个参数至少要有一个，优先级从左到右，max默认是10
+
+当options不是对象而是字符串时，会把它当做path
+
+```javascript
+// 创建可管理的文件对象
+// 存储空间名称与文件名称中间用 ":" 分隔
+const file = qiniu.file('<存储空间名称>:<文件名称>');
+
+// 上传目录下的ll.mp4文件(底层也是使用流上传)
+await file.concurrentSliceUpload({ path: __dirname + '/ll.mp4' });
+// 当options不是对象而是字符串时，会把它当做path，与上一步相同(底层也是使用流上传)
+await file.concurrentSliceUpload(__dirname + '/ll.mp4');
+
+// 使用流上传，并设置最大并发量为5
+await file.concurrentSliceUpload({ stream: fs.createStream(__dirname + '/ll.mp4'), max: 5 });
 ```

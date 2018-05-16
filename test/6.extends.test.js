@@ -21,7 +21,7 @@ const common = {
 };
 
 describe('自定义扩展方法测试', function(){
-  this.timeout(20000);
+  this.timeout(30000);
   before(function(done){
     // 随机个名字
     common.bucketName = new Date().getTime() + '';
@@ -37,9 +37,21 @@ describe('自定义扩展方法测试', function(){
   });
   it('sliceUpload分片上传', function(done){
     qiniu.file(common.scope)
-    .sliceUpload({ path: __dirname + '/resource/sliceUpload.test.zip' })
+    .sliceUpload(__dirname + '/resource/sliceUpload.test.zip')
     .then(function(result){
       debug('sliceUp分片上传并返回：%s', JSON.stringify(result));
+      expect(result).to.be.an('object');
+      expect(result.hash).to.be.a('string');
+      expect(result.key).to.be.a('string');
+      done();
+    })
+    .catch(console.error);
+  });
+  it('concurrentSliceUpload并发分片上传', function(done){
+    qiniu.file(common.scope)
+    .concurrentSliceUpload({ path: __dirname + '/resource/sliceUpload.test.zip', max: 2 })
+    .then(function(result){
+      debug('concurrentSliceUpload并发分片上传并返回：%s', JSON.stringify(result));
       expect(result).to.be.an('object');
       expect(result.hash).to.be.a('string');
       expect(result.key).to.be.a('string');

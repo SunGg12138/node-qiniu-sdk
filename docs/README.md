@@ -45,3 +45,4 @@ private            | bucket.private       | 设置 Bucket 访问权限，目前 
 接口                           | 说明 
 ------------------------------|----------------------------------
 file.sliceUpload              | 封装了创建块、创建文件2个接口来分片上传文件
+file.concurrentSliceUpload    | 封装了创建块、创建文件2个接口来分片上传文件，这是并发上传，性能比sliceUpload好
