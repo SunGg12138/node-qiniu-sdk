@@ -1,11 +1,19 @@
+try {
+  const qiniu_config = require('./resource/qiniu.config');
+} catch (error) {
+  throw new Error(`
+  先配置你的/test/resource/qiniu.config.json文件再测试
+  qiniu.config.json是放置AccessKey和SecretKey的配置文件
+  格式与qiniu.config.default.json相同，你需要配置你的qiniu.config.json
+  `);
+}
+const qiniu_config = require('./resource/qiniu.config');
 const expect = require('chai').expect;
 const Qiniu = require('../index');
-const qiniu_config = require('./resource/qiniu.config');
-
 let qiniu = null;
+
 describe('测试环境', function(){
   it('qiniu.config.json', function(){
-    const qiniu_config = require('./resource/qiniu.config');
     expect(qiniu_config.AccessKey).to.be.a('string');
     expect(qiniu_config.SecretKey).to.be.a('string');
     qiniu = new Qiniu(qiniu_config.AccessKey, qiniu_config.SecretKey);

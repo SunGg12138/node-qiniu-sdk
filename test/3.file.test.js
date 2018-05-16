@@ -1,3 +1,13 @@
+try {
+  const qiniu_config = require('./resource/qiniu.config');
+} catch (error) {
+  throw new Error(`
+  先配置你的/test/resource/qiniu.config.json文件再测试
+  qiniu.config.json是放置AccessKey和SecretKey的配置文件
+  格式与qiniu.config.default.json相同，你需要配置你的qiniu.config.json
+  `);
+}
+
 const expect = require('chai').expect;
 const debug = require('debug')('test');
 const Qiniu = require('../index');
@@ -155,7 +165,7 @@ describe('File 相关方法测试', function(){
         done();
       } catch (error) {
         if (error.statusCode === 478) {
-          console.error(new Error('statusCode=478，镜像回源失败，主要指镜像源服务器出现异常。可以无视这个错误'));
+          // console.error(new Error('statusCode=478，镜像回源失败，主要指镜像源服务器出现异常。可以无视这个错误'));
           done();
         } else {
           console.error(error);

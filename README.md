@@ -47,7 +47,6 @@ await file.delete();
 # 先配置你的/test/resource/qiniu.config.json文件再测试
 # qiniu.config.json是放置AccessKey和SecretKey的配置文件
 # 格式与qiniu.config.default.json相同，你需要配置你的qiniu.config.json
-# tip:别忘了把qiniu.config.default.json的名字改成qiniu.config.json
 $ mocha
 
 # 如果想看返回的数据信息也可以加上DEBUG
