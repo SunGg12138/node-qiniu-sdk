@@ -46,4 +46,12 @@ await qiniu.batch({
   ]
 });
 
+/**
+ * 下载文件
+ * 官方文档：https://developer.qiniu.com/kodo/manual/1232/download-process
+ * 把http://***.com/test.png文件下载到本地，下载指定区域
+ * 是基于流的
+*/
+await qiniu.download('http://***.com/test.png', __dirname + '/test.png', { start: 0, end: 10 });
+
 ```
