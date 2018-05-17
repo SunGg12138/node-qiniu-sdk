@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "debug": "^3.1.0",
+    "delegates": "^1.0.0",
     "request": "https://github.com/SunGg12138/request.git",
     "request-promise": "^4.2.2"
   },

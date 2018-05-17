@@ -38,7 +38,6 @@ SDK.prototype.bucket = function(bucketName){
 SDK.prototype.file = function(scope){
   return new File(scope, this);
 };
-
 /**
  * 获取 Bucket 列表
  * 官方文档：https://developer.qiniu.com/kodo/api/3926/get-service
