@@ -21,6 +21,14 @@ function SDK(AccessKey, SecretKey){
   if (!AccessKey || !SecretKey) throw new Error('Both AccessKey and SecretKey are required');
   this.AccessKey = AccessKey;
   this.SecretKey = SecretKey;
+
+  // cdn是相同的，只会创建一次
+  Object.defineProperty(this, 'cdn', {
+    get: function(){
+      if (!this._cdn) this._cdn = new CDN(this);
+      return this._cdn;
+    }
+  });
 }
 // 创建Bucket类
 SDK.prototype.bucket = function(bucketName){
@@ -30,10 +38,7 @@ SDK.prototype.bucket = function(bucketName){
 SDK.prototype.file = function(scope){
   return new File(scope, this);
 };
-// 创建CDN类
-SDK.prototype.cdn = function(scope){
-  return new CDN(this);
-};
+
 /**
  * 获取 Bucket 列表
  * 官方文档：https://developer.qiniu.com/kodo/api/3926/get-service

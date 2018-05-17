@@ -35,7 +35,7 @@ describe('CND 相关方法测试', function(){
       let domains = common.domains || await qiniu.bucket(common.bucketName).domain();
       common.domains = domains;
 
-      let result = await qiniu.cdn().log('2018-05-14', domains);
+      let result = await qiniu.cdn.log('2018-05-14', domains);
 
       debug('日志下载并返回：%s', JSON.stringify(result));
       
@@ -52,17 +52,17 @@ describe('CND 相关方法测试', function(){
         common.domains = domains;
         let result;
 
-        result = await qiniu.cdn().loganalyze({
+        result = await qiniu.cdn.loganalyze({
           _type: 'statuscode', domains, freq: '5min', startDate: '2018-05-13', endDate: '2018-05-14'
         });
         debug('批量查询状态码并返回：%s', JSON.stringify(result));
         
-        result = await qiniu.cdn().loganalyze({
+        result = await qiniu.cdn.loganalyze({
           _type: 'hitmiss', domains, freq: '5min', startDate: '2018-05-13', endDate: '2018-05-14'
         });
         debug('批量查询命中率并返回：%s', JSON.stringify(result));
 
-        result = await qiniu.cdn().loganalyze({
+        result = await qiniu.cdn.loganalyze({
           _type: 'topcountip', domains, region: 'global', startDate: '2018-05-13', endDate: '2018-05-14'
         });
         debug('批量请求访问次数 Top IP并返回：%s', JSON.stringify(result));
@@ -76,7 +76,7 @@ describe('CND 相关方法测试', function(){
   it('CDN.refresh 刷新', function(done){
     (async function(){
       // 使用空的数组测试，因为每日的刷新次数是有限的
-      let result = await qiniu.cdn().refresh({ urls: [], dirs: [] });
+      let result = await qiniu.cdn.refresh({ urls: [], dirs: [] });
       debug('刷新并返回：%s', JSON.stringify(result));
       expect(result).to.be.an('object');
       done();
@@ -84,7 +84,7 @@ describe('CND 相关方法测试', function(){
   });
   it('CDN.refreshList 刷新查询', function(done){
     (async function(){
-      let result = await qiniu.cdn().refreshList({ urls: [], dirs: [] });
+      let result = await qiniu.cdn.refreshList({ urls: [], dirs: [] });
       debug('刷新查询并返回：%s', JSON.stringify(result));
       expect(result).to.be.an('object');
       done();
@@ -93,7 +93,7 @@ describe('CND 相关方法测试', function(){
   it('CDN.prefetch 预取', function(done){
     (async function(){
       // 使用空的数组测试，因为每日的预取次数是有限的
-      let result = await qiniu.cdn().prefetch({ urls: [] });
+      let result = await qiniu.cdn.prefetch({ urls: [] });
       debug('预取并返回：%s', JSON.stringify(result));
       expect(result).to.be.an('object');
       done();
@@ -101,7 +101,7 @@ describe('CND 相关方法测试', function(){
   });
   it('CDN.prefetchList 预取查询', function(done){
     (async function(){
-      let result = await qiniu.cdn().prefetchList({});
+      let result = await qiniu.cdn.prefetchList({});
       debug('预取并返回：%s', JSON.stringify(result));
       expect(result).to.be.an('object');
       done();
@@ -109,7 +109,7 @@ describe('CND 相关方法测试', function(){
   });
   it('CDN.bandwidth 批量查询cdn带宽', function(done){
     (async function(){
-      let result = await qiniu.cdn().bandwidth({startDate: '2018-05-10', endDate: '2018-05-15', granularity: '5min', domains: []});
+      let result = await qiniu.cdn.bandwidth({startDate: '2018-05-10', endDate: '2018-05-15', granularity: '5min', domains: []});
       debug('批量查询cdn带宽并返回：%s', JSON.stringify(result));
       expect(result).to.be.an('object');
       done();
@@ -117,7 +117,7 @@ describe('CND 相关方法测试', function(){
   });
   it('CDN.flux 批量查询cdn流量', function(done){
     (async function(){
-      let result = await qiniu.cdn().flux({startDate: '2018-05-10', endDate: '2018-05-15', granularity: '5min', domains: []});
+      let result = await qiniu.cdn.flux({startDate: '2018-05-10', endDate: '2018-05-15', granularity: '5min', domains: []});
       debug('批量查询cdn流量并返回：%s', JSON.stringify(result));
       expect(result).to.be.an('object');
       done();
