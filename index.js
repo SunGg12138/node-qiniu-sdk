@@ -2,6 +2,8 @@ const fs = require('fs');
 const File = require('./lib/file');
 const CDN = require('./lib/cdn');
 const Bucket = require('./lib/bucket');
+const image = require('./lib/image');
+const resource = require('./lib/resource');
 const Extends = require('./lib/extends');
 const token = require('./lib/token');
 const request = require('request');
@@ -30,6 +32,13 @@ function SDK(AccessKey, SecretKey){
     }
   });
 }
+// 创建image类
+// image类是不需要token的，所以可以当做SDK的属性
+SDK.image = image;
+// 创建resource类
+// resource类是不需要token的，所以可以当做SDK的属性
+SDK.resource = resource;
+
 // 创建Bucket类
 SDK.prototype.bucket = function(bucketName){
   return new Bucket(bucketName, this);
@@ -214,3 +223,6 @@ SDK.prototype.rs = function(options){
   // 发送请求
   return rp(request_options);
 };
+
+// 扩展SDK
+Object.assign(SDK.prototype, Extends.SDK);

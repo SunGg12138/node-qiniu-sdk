@@ -6,3 +6,7 @@ package-lock.json
 # qiniu.config.json是放置AccessKey和SecretKey的配置文件
 # 格式与qiniu.config.default.json相同，你需要配置你的qiniu.config.json
 test/resource/qiniu.config.json
+
+# 测试图片
+test/resource/processing.test.jpg
+test/resource/qrcode.test.png

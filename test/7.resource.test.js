@@ -16,9 +16,10 @@ const qiniu = new Qiniu(qiniu_config.AccessKey, qiniu_config.SecretKey);
 
 const common = {
   bucketName: null,
-  fileName: 'file.image.test.jpg',
+  fileName: 'README.md',
   scope: null,
-  domain: null
+  domain: null,
+  url: null
 };
 describe('file.image 相关方法测试', function(){
   this.timeout(20000);
@@ -37,49 +38,34 @@ describe('file.image 相关方法测试', function(){
       debug('获取空间域名返回：%s', JSON.stringify(r2));
       common.domain = 'http://' + r2[0];
 
-      // 上传图片
-      let r3 = await qiniu.file(common.scope).upload(__dirname + '/resource/file.image.test.jpg');
-      debug('上传图片返回：%s', JSON.stringify(r3));
-
+      // 上传README.md
+      let r3 = await qiniu.file(common.scope).upload(require('path').join(__dirname, '../README.md'));
+      debug('上传README.md返回：%s', JSON.stringify(r3));
+      // 文件路径
+      common.url = common.domain + '/' + common.fileName;
       done();
     })();
   });
-  it('imageInfo 图片基本信息', function(done){
-    qiniu.file(common.scope).domain(common.domain).imageInfo()
-    .then(function(result){
-      debug('返回：%s',JSON.stringify(result));
-      expect(result).to.be.an('object')
-      done();
-    })
-    .catch(console.error);
-  });
-  it('exif 图片EXIF信息', function(done){
-    qiniu.file(common.scope).domain(common.domain).exif()
-    .then(function(result){
-      debug('返回：%s',JSON.stringify(result));
-      expect(result).to.be.an('object')
-      done();
-    })
-    .catch(console.error);
-  });
-  it('imageAve 图片平均色调', function(done){
-    qiniu.file(common.scope).domain(common.domain).imageAve()
-    .then(function(result){
-      debug('返回：%s',JSON.stringify(result));
-      expect(result).to.be.an('object')
-      done();
-    })
-    .catch(console.error);
-  });
-  it('processing 图像处理', function(done){
-    qiniu.file(common.scope).domain(common.domain).processing({
-      imageslim: true,
-      imageView: { w: 200, h: 300 },
-      imageMogr: { blur: '20x2', rotate: 45 },
-      watermark: { image: 'https://odum9helk.qnssl.com/qiniu-logo.png', scale: 0.3 },
-      roundPic: { radius: 20 },
-      path: __dirname + '/resource/processing.test.jpg'
-    })
+  // it('resource.qhash 文件HASH值', function(done){
+  //   Qiniu.resource.qhash(common.url, 'md5')
+  //   .then(function(result){
+  //     debug('返回：%s',JSON.stringify(result));
+  //     expect(result).to.be.an('object')
+  //     done();
+  //   })
+  //   .catch(console.error);
+  // });
+  // it('resource.md2html markdown=>html', function(done){
+  //   Qiniu.resource.md2html(common.url)
+  //   .then(function(result){
+  //     debug('返回：%s',JSON.stringify(result));
+  //     expect(result.indexOf('</h1>') > -1).to.be.ok;
+  //     done();
+  //   })
+  //   .catch(console.error);
+  // });
+  it('resource.qrcode', function(done){
+    Qiniu.resource.qrcode(common.url, { path: __dirname + '/resource/qrcode.test.png' })
     .then(function(result){
       debug('返回：%s',JSON.stringify(result));
       done();

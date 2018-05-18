@@ -3,27 +3,25 @@
 ```javascript
 // 引入模块
 const Qiniu = require('node-qiniu-sdk');
-// 配置你的qiniu
-const qiniu = new Qiniu('<Your AccessKey>', '<Your SecretKey>');
 
 // 所有的方法都返回promise，这里我就直接用await了
 
-// 创建可管理的文件对象
-// 图像的操作前必须要配置域名
-// 域名需要带上协议http或https
-const file = qiniu.file('<存储空间名称>:<文件名称>').domain('<域名>');
+// 创建可管理的image对象
+// 图像的操作前必须要配置图像的URL
+// URL需要是完整的
+// 图像操作不需要token，直接使用就可以
 
 // 获取图片基本信息
 // 官方文档：https://developer.qiniu.com/dora/manual/1269/pictures-basic-information-imageinfo
-await file.imageInfo();
+await Qiniu.image.imageInfo('<URL>');
 
 // 图片EXIF信息
 // 官方文档：https://developer.qiniu.com/dora/manual/1260/photo-exif-information-exif
-await file.exif();
+await Qiniu.image.exif('<URL>');
 
 // 图片平均色调
 // 官方文档：https://developer.qiniu.com/dora/manual/1268/image-average-hue-imageave
-await file.imageAve();
+await Qiniu.image.imageAve('<URL>');
 
 // 图像处理
 // mageView 官方文档：https://developer.qiniu.com/dora/manual/1279/basic-processing-images-imageview2
@@ -32,7 +30,7 @@ await file.imageAve();
 // roundPic 官方文档：https://developer.qiniu.com/dora/manual/4083/image-rounded-corner
 //
 // 如果指定path或stream会进行流操作写成图片，否则只会输出请求的url
-await file.processing({
+await Qiniu.image.processing('<URL>', {
   imageslim: true,
   imageView: { w: 200, h: 300 },
   imageMogr: { blur: '20x2', rotate: 45 },
