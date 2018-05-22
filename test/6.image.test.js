@@ -16,12 +16,12 @@ const qiniu = new Qiniu(qiniu_config.AccessKey, qiniu_config.SecretKey);
 
 const common = {
   bucketName: null,
-  fileName: 'file.image.test.jpg',
+  fileName: 'image.test.jpg',
   scope: null,
   domain: null,
   url: null
 };
-describe('file.image 相关方法测试', function(){
+describe('image 相关方法测试', function(){
   this.timeout(20000);
   before(function(done){
     // 随机个名字
@@ -46,42 +46,56 @@ describe('file.image 相关方法测试', function(){
       done();
     })();
   });
-  // it('imageInfo 图片基本信息', function(done){
-  //   Qiniu.image.imageInfo(common.url)
-  //   .then(function(result){
-  //     debug('返回：%s',JSON.stringify(result));
-  //     expect(result).to.be.an('object')
-  //     done();
-  //   })
-  //   .catch(console.error);
-  // });
-  // it('exif 图片EXIF信息', function(done){
-  //   Qiniu.image.exif(common.url)
-  //   .then(function(result){
-  //     debug('返回：%s',JSON.stringify(result));
-  //     expect(result).to.be.an('object')
-  //     done();
-  //   })
-  //   .catch(console.error);
-  // });
-  // it('imageAve 图片平均色调', function(done){
-  //   Qiniu.image.imageAve(common.url)
-  //   .then(function(result){
-  //     debug('返回：%s',JSON.stringify(result));
-  //     expect(result).to.be.an('object')
-  //     done();
-  //   })
-  //   .catch(console.error);
-  // });
-  it('processing 图像处理', function(done){
+  it('imageInfo 图片基本信息', function(done){
+    Qiniu.image.imageInfo(common.url)
+    .then(function(result){
+      debug('返回：%s',JSON.stringify(result));
+      expect(result).to.be.an('object')
+      done();
+    })
+    .catch(console.error);
+  });
+  it('exif 图片EXIF信息', function(done){
+    Qiniu.image.exif(common.url)
+    .then(function(result){
+      debug('返回：%s',JSON.stringify(result));
+      expect(result).to.be.an('object')
+      done();
+    })
+    .catch(console.error);
+  });
+  it('imageAve 图片平均色调', function(done){
+    Qiniu.image.imageAve(common.url)
+    .then(function(result){
+      debug('返回：%s',JSON.stringify(result));
+      expect(result).to.be.an('object')
+      done();
+    })
+    .catch(console.error);
+  });
+  it('processing 获取图像处理的链接', function(done){
     Qiniu.image.processing(common.url, {
-      // imageslim: true,
+      imageslim: true,
       imageView: { w: 200, h: 300 },
-      // imageMogr: { blur: '20x2', rotate: 45 },
-      // watermark: { image: 'https://odum9helk.qnssl.com/qiniu-logo.png', scale: 0.3 },
-      // roundPic: { radius: 20 },
-      // path: __dirname + '/resource/processing.test.jpg',
-      saveas: qiniu.saveas(common.bucketName, 'processing.jpg')
+      imageMogr: { blur: '20x2', rotate: 45 },
+      watermark: { image: 'https://odum9helk.qnssl.com/qiniu-logo.png', scale: 0.3 },
+      roundPic: { radius: 20 }
+    })
+    .then(function(result){
+      debug('返回：%s',JSON.stringify(result));
+      expect(result).to.be.a('string');
+      done();
+    })
+    .catch(console.error);
+  });
+  it('processing 图像处理后保存到本地', function(done){
+    Qiniu.image.processing(common.url, {
+      imageslim: true,
+      imageView: { w: 200, h: 300 },
+      imageMogr: { blur: '20x2', rotate: 45 },
+      watermark: { image: 'https://odum9helk.qnssl.com/qiniu-logo.png', scale: 0.3 },
+      roundPic: { radius: 20 },
+      path: __dirname + '/resource/processing.test.jpg'
     })
     .then(function(result){
       debug('返回：%s',JSON.stringify(result));
@@ -89,13 +103,29 @@ describe('file.image 相关方法测试', function(){
     })
     .catch(console.error);
   });
-  // after(function(done){
-  //   qiniu.bucket(common.bucketName)
-  //   .drop()
-  //   .then(function(result){
-  //     debug('删除Bucket并返回：%s', JSON.stringify(result));
-  //     done();
-  //   })
-  //   .catch(console.error);
-  // });
+  it('processing 图像处理后保存到储存空间', function(done){
+    Qiniu.image.processing(common.url, {
+      imageslim: true,
+      imageView: { w: 200, h: 300 },
+      imageMogr: { blur: '20x2', rotate: 45 },
+      watermark: { image: 'https://odum9helk.qnssl.com/qiniu-logo.png', scale: 0.3 },
+      roundPic: { radius: 20 },
+      saveas: qiniu.saveas(common.bucketName, 'processing.jpg')
+    })
+    .then(function(result){
+      debug('返回：%s',JSON.stringify(result));
+      expect(result).to.be.an('object');
+      done();
+    })
+    .catch(console.error);
+  });
+  after(function(done){
+    qiniu.bucket(common.bucketName)
+    .drop()
+    .then(function(result){
+      debug('删除Bucket并返回：%s', JSON.stringify(result));
+      done();
+    })
+    .catch(console.error);
+  });
 });

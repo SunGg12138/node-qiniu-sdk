@@ -21,7 +21,7 @@ const common = {
   domain: null,
   url: null
 };
-describe('file.image 相关方法测试', function(){
+describe('resource 相关方法测试', function(){
   this.timeout(20000);
   before(function(done){
     // 随机个名字
@@ -41,31 +41,104 @@ describe('file.image 相关方法测试', function(){
       // 上传README.md
       let r3 = await qiniu.file(common.scope).upload(require('path').join(__dirname, '../README.md'));
       debug('上传README.md返回：%s', JSON.stringify(r3));
+
+      // 上传README2.md
+      let r4 = await qiniu.file(common.bucketName + ':README2.md').upload(require('path').join(__dirname, '../README.md'));
+      debug('上传README2.md返回：%s', JSON.stringify(r4));
+
       // 文件路径
       common.url = common.domain + '/' + common.fileName;
       done();
     })();
   });
-  // it('resource.qhash 文件HASH值', function(done){
-  //   Qiniu.resource.qhash(common.url, 'md5')
-  //   .then(function(result){
-  //     debug('返回：%s',JSON.stringify(result));
-  //     expect(result).to.be.an('object')
-  //     done();
-  //   })
-  //   .catch(console.error);
-  // });
-  // it('resource.md2html markdown=>html', function(done){
-  //   Qiniu.resource.md2html(common.url)
-  //   .then(function(result){
-  //     debug('返回：%s',JSON.stringify(result));
-  //     expect(result.indexOf('</h1>') > -1).to.be.ok;
-  //     done();
-  //   })
-  //   .catch(console.error);
-  // });
-  it('resource.qrcode', function(done){
-    Qiniu.resource.qrcode(common.url, { path: __dirname + '/resource/qrcode.test.png' })
+  it('resource.qhash 文件HASH值', function(done){
+    Qiniu.resource.qhash(common.url, 'md5')
+    .then(function(result){
+      debug('返回：%s',JSON.stringify(result));
+      expect(result).to.be.an('object')
+      done();
+    })
+    .catch(console.error);
+  });
+  it('resource.md2html markdown=>html', function(done){
+    Qiniu.resource.md2html(common.url)
+    .then(function(result){
+      debug('返回：%s',JSON.stringify(result));
+      expect(result.indexOf('</h1>') > -1).to.be.ok;
+      done();
+    })
+    .catch(console.error);
+  });
+  it('resource.concat 合并文件', function(done){
+    Qiniu.resource.concat({
+      mimeType: 'text/markdown',
+      urls: [
+        common.domain + '/README.md',
+        common.domain + '/README2.md'
+      ],
+      saveas: {
+        bucketName: common.bucketName,
+        fileName: 'README.concat.md'
+      },
+      pfop: qiniu.pfop({
+        bucketName: common.bucketName,
+        fileName: 'README.md'
+      })
+    })
+    .then(function(result){
+      debug('concat返回：%s', JSON.stringify(result));
+      expect(result).to.be.an('object');
+      done();
+    })
+    .catch(console.error);
+  });
+  it('resource.mkzip 多文件压缩', function(done){
+    Qiniu.resource.mkzip({
+      mode: 2,
+      urls: [
+        common.domain + '/README.md',
+        common.domain + '/README2.md'
+      ],
+      saveas: {
+        bucketName: common.bucketName,
+        fileName: 'README.mkzip.zip'
+      },
+      pfop: qiniu.pfop({
+        bucketName: common.bucketName,
+        fileName: 'README.md'
+      })
+    })
+    .then(function(result){
+      debug('mkzip返回：%s', JSON.stringify(result));
+      expect(result).to.be.an('object');
+      done();
+    })
+    .catch(console.error);
+  });
+  it('resource.qrcode 处理后的二维码保存到本地', function(done){
+    Qiniu.resource.qrcode(common.url, {
+      imageslim: true,
+      imageView: { w: 200, h: 300 },
+      imageMogr: { blur: '20x2', rotate: 45 },
+      watermark: { image: 'https://odum9helk.qnssl.com/qiniu-logo.png', scale: 0.3 },
+      roundPic: { radius: 20 },
+      path: __dirname + '/resource/qrcode.test.png'
+    })
+    .then(function(result){
+      debug('返回：%s',JSON.stringify(result));
+      done();
+    })
+    .catch(console.error);
+  });
+  it('resource.qrcode 处理后的二维码保存到储存空间', function(done){
+    Qiniu.resource.qrcode(common.url, {
+      imageslim: true,
+      imageView: { w: 200, h: 300 },
+      imageMogr: { blur: '20x2', rotate: 45 },
+      watermark: { image: 'https://odum9helk.qnssl.com/qiniu-logo.png', scale: 0.3 },
+      roundPic: { radius: 20 },
+      saveas: qiniu.saveas(common.bucketName, 'qrcode.processing.jpg')
+    })
     .then(function(result){
       debug('返回：%s',JSON.stringify(result));
       done();

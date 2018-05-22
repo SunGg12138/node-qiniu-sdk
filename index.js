@@ -7,6 +7,7 @@ const resource = require('./lib/resource');
 const Extends = require('./lib/extends');
 const token = require('./lib/token');
 const request = require('request');
+const debug = require('debug')('qiniu-sdk');
 const rp = require('request-promise');
 const querystring = require('querystring');
 const EncodedEntryURI = require('./lib/encrypt/EncodedEntryURI');
@@ -141,6 +142,35 @@ SDK.prototype.download = function(url, path, range){
     writeStream.on('error', reject);
     request(options).on('error', reject).pipe(writeStream);
   });
+};
+/**
+ * 持久化处理
+ * 官方文档：https://developer.qiniu.com/dora/manual/3686/pfop-directions-for-use
+ */
+SDK.prototype.pfop = function(options){
+  options.host = 'http://api.qiniu.com';
+  options.path = '/pfop';
+  options.body = 'bucket=' + options.bucketName + 
+                 '&key=' + options.fileName;
+
+  // force参数、notifyURL参数
+  if (options.isForce) options.body += '&force=1';
+  if (options.notifyURL) options.body += '&notifyURL=' + options.notifyURL;
+
+  let run = (fops) => {
+    debug('fops字符串: %s', fops);
+    
+    if (fops) options.body += '&fops=' + fops;
+
+    options.form = options.body;
+
+    // 因为是闭包，防止内存泄漏
+    run = null;
+
+    return this.rs(options);
+  }
+
+  return run;
 };
 /**
  * Tool: 获取资源操作指令，只针对可批量操作的功能
