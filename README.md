@@ -1,6 +1,6 @@
 # node-qiniu-sdk
 
-使用Promise来操作七牛云，接口名称与官方接口想对应
+使用Promise来操作七牛云，接口名称与官方接口对应
 
 qiniu的官方sdk不太符合日常需要，所以有时间写了个模块，你也可去qiniu官方查看[官方SDK](https://github.com/qiniu/nodejs-sdk)
 
