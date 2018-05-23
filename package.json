@@ -1,6 +1,6 @@
 {
   "name": "node-qiniu-sdk",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "与官方文档同步的API，使用promise",
   "main": "index.js",
   "directories": {
