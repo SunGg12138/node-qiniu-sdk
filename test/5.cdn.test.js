@@ -84,7 +84,7 @@ describe('CND 相关方法测试', function(){
   });
   it('CDN.refreshList 刷新查询', function(done){
     (async function(){
-      let result = await qiniu.cdn.refreshList({ urls: [], dirs: [] });
+      let result = await qiniu.cdn.refreshList({ urls: [] });
       debug('刷新查询并返回：%s', JSON.stringify(result));
       expect(result).to.be.an('object');
       done();

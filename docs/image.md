@@ -19,7 +19,7 @@ await Qiniu.image.imageInfo('<URL>');
 // 官方文档：https://developer.qiniu.com/dora/manual/1260/photo-exif-information-exif
 await Qiniu.image.exif('<URL>');
 
-// 图片平均色调
+// 图片平均色调信息
 // 官方文档：https://developer.qiniu.com/dora/manual/1268/image-average-hue-imageave
 await Qiniu.image.imageAve('<URL>');
 

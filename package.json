@@ -1,6 +1,6 @@
 {
   "name": "node-qiniu-sdk",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "与官方文档同步的API，使用promise",
   "main": "index.js",
   "directories": {
@@ -35,7 +35,7 @@
     "ES6"
   ],
   "author": "sungg12138",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/SunGg12138/node-qiniu-sdk/issues"
   },

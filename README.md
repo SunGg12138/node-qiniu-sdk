@@ -1,6 +1,6 @@
 # node-qiniu-sdk
 
-使用Promise，方法、参数名称都严格与官方文档同步
+使用Promise来操作七牛云，接口名称与官方接口想对应
 
 qiniu的官方sdk不太符合日常需要，所以有时间写了个模块，你也可去qiniu官方查看[官方SDK](https://github.com/qiniu/nodejs-sdk)
 
@@ -12,7 +12,7 @@ $ npm install node-qiniu-sdk
 
 ## 简单使用介绍
 
-每个方法都与官网的对应
+每个方法都与官网的对应，更多方法可参考[文档](./docs)
 
 ```javascript
 const Qiniu = require('node-qiniu-sdk');
@@ -39,8 +39,6 @@ await file.upload({ path: '<本地文件路径>' });
 await file.delete();
 ```
 
-更多方法可参考[文档](./docs)
-
 ## 测试
 
 ```bash
@@ -55,6 +53,17 @@ $ DEBUG=test mocha
 # 如果想看操作信息可以加上DEBUG=qiniu-sdk（例如：分片上传的步骤）
 $ DEBUG=qiniu-sdk mocha
 ```
+
+## 各模块功能
+
+模块名称                 | 模块的功能
+------------------------|-------------------------------------
+[bucket](./doc/bucket.md) | 储存空间创建、设置镜像源、设置访问权限、获取空间域名、资源列举、删除
+[file](./doc/file.md) | 文件上传、重命名、复制、删除、修改状态、更新生命周期、修改存储类型、资源元信息查询、资源元信息修改、第三方资源抓取、镜像资源更新、分片上传
+[cdn](./doc/cdn.md) | 日志下载、日志分析、缓存刷新、刷新查询、预取、预取查询、批量查询cdn带宽、批量查询cdn流量
+[image](./doc/image.md) | 获取图片基本信息、图片EXIF信息、图片平均色调信息，图像的瘦身处理、基本处理、高级处理、水印处理、圆角处理
+[resource](./doc/resource.md) | 获取文件hash值、markdown转html、生成资源二维码、资源合并、资源压缩
+[sdk](./doc/sdk.md) | 获取Bucket列表、异步第三方资源抓取、文件批量操作、下载资源、持久化处理
 
 ## package.json
 
