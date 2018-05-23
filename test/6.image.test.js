@@ -73,6 +73,41 @@ describe('image 相关方法测试', function(){
     })
     .catch(console.error);
   });
+  it('pulp 图像鉴黄', function(done){
+    Qiniu.image.pulp(common.url)
+    .then(function(result){
+      debug('pulp 图像鉴黄并返回：%s', JSON.stringify(result));
+      done();
+    })
+    .catch(console.error);
+  });
+  it('terror 图片鉴暴恐', function(done){
+    Qiniu.image.terror(common.url)
+    .then(function(result){
+      debug('terror 图片鉴暴恐并返回：%s', JSON.stringify(result));
+      done();
+    })
+    .catch(console.error);
+  });
+  it('politician 政治人物识别', function(done){
+    Qiniu.image.politician(common.url)
+    .then(function(result){
+      debug('politician 政治人物识别并返回：%s', JSON.stringify(result));
+      done();
+    })
+    .catch(console.error);
+  });
+  it('review 图像审核', function(done){
+    Qiniu.image.review({
+      uri: common.url,
+      sdk: qiniu
+    })
+    .then(function(result){
+      debug('review图像审核并返回：%s', JSON.stringify(result));
+      done();
+    })
+    .catch(console.error);
+  });
   it('processing 获取图像处理的链接', function(done){
     Qiniu.image.processing(common.url, {
       imageslim: true,
