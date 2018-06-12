@@ -24,6 +24,13 @@ describe('Bucket 相关方法测试', function(){
     // 随机个名字
     common.bucketName = new Date().getTime() + '';
   });
+  it('zone 切换区域', function(done){
+    // 来回切换一次区域
+    let bucket = qiniu.bucket(common.bucketName);
+    bucket.tabZone('z2');
+    expect(bucket.zone === 'z2').to.be.ok;
+    done();
+  });
   it('mk 创建 Bucket', function(done){
     qiniu.bucket(common.bucketName)
     .mk()

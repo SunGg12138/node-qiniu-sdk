@@ -8,8 +8,8 @@ const qiniu = new Qiniu('<Your AccessKey>', '<Your SecretKey>');
 
 // 所有的方法都返回promise，这里我就直接用await了
 
-// 创建可管理的储存空间对象并设置区域，区域默认是z0
-const bucket = qiniu.bucket('<存储空间名称>').zone('z1');
+// 创建可管理的储存空间对象并切换区域，区域默认是z0
+const bucket = qiniu.bucket('<存储空间名称>').tabZone('z1');
 
 // 如果你没有该名称的储存空间，使用mk方法会创建一个
 // 官方文档：https://developer.qiniu.com/kodo/api/1382/mkbucketv2
@@ -45,21 +45,21 @@ await bucket.drop();
 
 ## Bucket 使用详情
 
-### bucket.zone(zone) 选择和切换区域
+### bucket.tabZone(zone) 选择和切换区域
 
 有1个参数：
   - zone(必选): String类型，空间及文件的所在区域
 
 目前的区间z0, z1, z2, na0, as0，你可以在zone.js文件[查看详情](../zone.js)
 
-zone方法不会返回promise，会直接返回Bucket对象
+tabZone方法不会返回promise，会直接返回Bucket对象
 
 ```javascript
 // 创建可管理的文件对象
 const bucket = qiniu.bucket('<存储空间名称>');
 
 // 区域默认是z0，如果你的区域不是z0，需要使用zone切换
-bucket.zone('z1');
+bucket.tabZone('z1');
 ```
 
 ### bucket.mk() 创建bucket

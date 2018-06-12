@@ -8,9 +8,9 @@ const qiniu = new Qiniu('<Your AccessKey>', '<Your SecretKey>');
 
 // 所有的方法都返回promise，这里我就直接用await了
 
-// 创建可管理的文件对象并设置区域，区域默认是z0
+// 创建可管理的文件对象并切换区域，区域默认是z0
 // 存储空间名称与文件名称中间用 ":" 分隔
-const file = qiniu.file('<存储空间名称>:<文件名称>').zone('z1');
+const file = qiniu.file('<存储空间名称>:<文件名称>').tabZone('z1');
 
 // 直传文件
 // 参数还有很多，只有path参数是必须
@@ -67,14 +67,14 @@ await file.sliceUpload({ path: '<本地文件路径>', max: 5});
 
 ## File 使用详情
 
-### file.zone(zone) 选择和切换区域
+### file.tabZone(zone) 选择和切换区域
 
 有1个参数：
   - zone(必选): String类型，空间及文件的所在区域
 
 目前的区间z0, z1, z2, na0, as0，你可以在zone.js文件[查看详情](../lib/zone.js)
 
-zone方法不会返回promise，会直接返回File对象
+tabZone方法不会返回promise，会直接返回File对象
 
 ```javascript
 // 创建可管理的文件对象
@@ -82,7 +82,7 @@ zone方法不会返回promise，会直接返回File对象
 const file = qiniu.file('<存储空间名称>:<文件名称>');
 
 // 区域默认是z0，如果你的区域不是z0，需要使用zone切换
-file.zone('z1');
+file.tabZone('z1');
 ```
 
 ### file.upload(options) 上传文件或文本
