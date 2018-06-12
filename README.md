@@ -67,8 +67,12 @@ $ DEBUG=qiniu-sdk mocha
 
 ## package.json
 
-由于request在post提交文本时，也会JSON.stringify，所以会多一对“"”分号，在某些操作会出现异常
-现在的request引用的是我fork后修改过的，request模块我commit了，等待merge
+1. 由于request提交content-type为text/plain时，会JSON.stringify，所以会多一对“"”分号
+2. request为防止url异常会把url给eccodeURIComponent
+
+这两点在某些请求时会出错，所以作了些修改
+
+现在的request引用的是我fork后修改过的，request模块我提交了我的代码，等待merge
 
 ```javascript
 ...

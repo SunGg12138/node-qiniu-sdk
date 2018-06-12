@@ -34,6 +34,13 @@ describe('File 相关方法测试', function(){
     })
     .catch(console.error);
   });
+  it('tabZone 切换区域', function(done){
+    // 来回切换一次区域
+    let file = qiniu.file(common.bucketName + ':logo.png');
+    file.tabZone('z2');
+    expect(file.zone === 'z2').to.be.ok;
+    done();
+  });
   it('upload 使用流上传', function(done){
     qiniu.file(common.bucketName + ':logo.png')
     .upload({ stream: require('request').get('https://www.baidu.com/img/bd_logo1.png?qua=high') })
