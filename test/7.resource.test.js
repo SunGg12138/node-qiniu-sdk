@@ -4,7 +4,8 @@ try {
   throw new Error(`
   先配置你的/test/resource/qiniu.config.json文件再测试
   qiniu.config.json是放置AccessKey和SecretKey的配置文件
-  格式与qiniu.config.default.json相同，你需要配置你的qiniu.config.json
+  1. 配置你的AccessKey和SecretKey到/test/resource/qiniu.config.default.json 
+  2. qiniu.config.default.json 改名为qiniu.config.json
   `);
 }
 
