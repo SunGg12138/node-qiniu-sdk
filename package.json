@@ -1,7 +1,7 @@
 {
   "name": "node-qiniu-sdk",
   "version": "1.1.3",
-  "description": "与官方文档同步的API，使用promise",
+  "description": "nodejs，七牛云异步操作模块",
   "main": "index.js",
   "directories": {
     "doc": "docs",
@@ -11,8 +11,7 @@
   "dependencies": {
     "debug": "^3.1.0",
     "delegates": "^1.0.0",
-    "request": "https://github.com/SunGg12138/request.git",
-    "request-promise": "^4.2.2"
+    "node-request-slim": "^1.0.0"
   },
   "devDependencies": {
     "chai": "^4.1.2"

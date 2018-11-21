@@ -8,7 +8,7 @@ const Extends = require('./lib/extends');
 const token = require('./lib/token');
 const request = require('request');
 const debug = require('debug')('qiniu-sdk');
-const rp = require('request-promise');
+const rp = require('node-request-slim').promise;
 const querystring = require('querystring');
 const EncodedEntryURI = require('./lib/encrypt/EncodedEntryURI');
 const urlsafe_base64_encode = require('./lib/encrypt/urlsafe_base64_encode');
@@ -85,9 +85,8 @@ SDK.prototype.sisyphus = function(options){
     url: 'http://api-' + options.zone + '.qiniu.com' + options.path,
     headers: {
       'Authorization': qiniu_token,
-      'Content-Type': 'application/json'
+      'content-type': 'application/json'
     },
-    json: true,
     body: options.body
   });
 };
@@ -233,8 +232,7 @@ SDK.prototype.rs = function(options){
     url: options.url || (options.host || 'http://rs.qiniu.com') + options.path,
     headers: {
       'Authorization': 'QBox ' + access_token
-    },
-    json: true,
+    }
   };
 
   if (options.form) {
