@@ -65,6 +65,33 @@ $ DEBUG=qiniu-sdk mocha
 [resource](./docs/resource.md) | 获取文件hash值、markdown转html、生成资源二维码、资源合并、资源压缩
 [sdk](./docs/sdk.md) | 获取Bucket列表、异步第三方资源抓取、文件批量操作、下载资源、持久化处理
 
+### image 图片处理
+
+```javascript
+const Qiniu = require('node-qiniu-sdk');
+await Qiniu.image.processing(common.url, {
+  imageslim: true,  // 图片瘦身（imageslim）将存储在七牛的JPEG、PNG格式的图片实时压缩而尽可能不影响画质。
+  imageView: { w: 200, h: 300 },  // 图片基本处理接口可对图片进行缩略操作，生成各种缩略图。
+  imageMogr: { blur: '20x2', rotate: 45 }, // 图片高级处理接口为开发者提供了一系列高级图片处理功能，包括缩放、裁剪、旋转等。
+  watermark: { image: 'https://odum9helk.qnssl.com/qiniu-logo.png', scale: 0.3 },  // 七牛云存储提供三种水印接口
+  roundPic: { radius: 20 }  // 图片圆角处理
+
+  // 指定path或stream会保存到本地（path和stream原理相同）
+  // path: __dirname + '/processing.test.jpg',
+  // stream: fs.createWriteStream(__dirname + '/processing.test.jpg'),
+
+  // 指定saveas会把处理的结果保存到指定七牛云仓库
+  // saveas: qiniu.saveas(common.bucketName, 'processing.jpg')
+});
+```
+- 处理前：
+
+<img src="http://pimnrbs1q.bkt.clouddn.com/file.image.test.jpg" width="300">
+
+- 处理后：
+
+![处理后](http://pimnrbs1q.bkt.clouddn.com/processing.test.jpg)
+
 ## package.json
 
 1. 由于request提交content-type为text/plain时，会JSON.stringify，所以会多一对“"”分号

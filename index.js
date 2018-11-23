@@ -42,7 +42,7 @@ SDK.resource = resource;
 
 // 创建Bucket类
 SDK.prototype.bucket = function(bucketName){
-  return new Bucket(bucketName, this);
+  return new Bucket(bucketName.toString(), this);
 };
 // 创建File类
 SDK.prototype.file = function(scope){
