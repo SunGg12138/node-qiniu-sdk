@@ -9,6 +9,7 @@ try {
   `);
 }
 
+const fs = require('fs');
 const expect = require('chai').expect;
 const debug = require('debug')('test');
 const Qiniu = require('../index');
@@ -16,17 +17,33 @@ const qiniu_config = require('./resource/qiniu.config');
 const qiniu = new Qiniu(qiniu_config.AccessKey, qiniu_config.SecretKey);
 
 const common = {
-  bucketName: null
+  bucketName: null,
+  fileName: 'image.test.jpg',
+  scope: null,
+  domain: null,
+  url: null
 };
 describe('SDK 相关方法测试', function(){
   this.timeout(20000);
   before(async function(){
     // 随机个名字
     common.bucketName = new Date().getTime() + '';
-    let result = await qiniu.bucket(common.bucketName).mk()
-    debug('创建bucket：%s并返回：%s', common.bucketName, JSON.stringify(result));
-    expect(result).to.be.an('object');
-    expect(result.error).to.be.undefined;
+    common.scope = common.bucketName + ':' + common.fileName;
+
+    // 创建储存空间
+    let r1 = await qiniu.bucket(common.bucketName).mk();
+    debug('创建bucket：%s并返回：%s', common.bucketName, JSON.stringify(r1));
+
+    // 获取空间域名
+    let r2 = await qiniu.bucket(common.bucketName).domain();
+    debug('获取空间域名返回：%s', JSON.stringify(r2));
+    common.domain = 'http://' + r2[0];
+
+    // 上传图片
+    let r3 = await qiniu.file(common.scope).upload(__dirname + '/resource/file.image.test.jpg');
+    debug('上传图片返回：%s', JSON.stringify(r3));
+    // 文件路径
+    common.url = common.domain + '/' + common.fileName;
   });
   it('buckets 获取 Bucket 列表', async function(){
     let result = await qiniu.buckets();
@@ -63,6 +80,33 @@ describe('SDK 相关方法测试', function(){
     expect(result.error).to.be.undefined;
     expect(ops.length === result.length).to.be.ok;
     expect(result).to.be.an('array');
+  });
+  it('download 公开资源下载到本地', async function(){
+    let local_path = __dirname + '/resource/image.download.public.test.jpg';
+    await qiniu.download({
+      url: common.url,
+      isPublic: true,
+      path: local_path
+    });
+    expect(fs.existsSync(local_path)).to.be.ok;
+  });
+  it('download 私有资源下载到本地', async function(){
+    // 设置仓库私有化
+    let r1 = await qiniu.bucket(common.bucketName).private(1);
+    debug('设置仓库私有化：%s并返回：%s', JSON.stringify(r1));
+
+    // let r2 = await qiniu.download({
+    //   url: common.url,
+    //   isPublic: true
+    // });
+    // debug('以下载公共资源的方法下载此私有资源：%s并返回：%s', JSON.stringify(r2));
+
+    let local_path = __dirname + '/resource/image.download.private.test.jpg';
+    await qiniu.download({
+      url: common.url,
+      stream: fs.createWriteStream(local_path)
+    });
+    expect(fs.existsSync(local_path)).to.be.ok;
   });
   after(async function(){
     let result = await qiniu.bucket(common.bucketName).drop();

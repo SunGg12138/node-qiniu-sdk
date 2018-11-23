@@ -7,7 +7,6 @@ const resource = require('./lib/resource');
 const Statistic = require('./lib/statistic');
 const Extends = require('./lib/extends');
 const token = require('./lib/token');
-const request = require('node-request-slim');
 const debug = require('debug')('qiniu-sdk');
 const rp = require('node-request-slim').promise;
 const querystring = require('querystring');
@@ -121,31 +120,45 @@ SDK.prototype.batch = function(options){
 /**
  * 下载资源
  * 官方文档：https://developer.qiniu.com/kodo/manual/1232/download-process
- * url: 下载的链接
- * path: 本地的路径
- * range: 分片下载
+ * @param {String} options.url 必选，下载的链接
+ * @param {String} options.path 可选，下载到本地的路径
+ * @param {Stream} options.stream 可选，下载的流
+ * @param {Object} options.range 可选，分片下载的区域，用户可以在下载时设定该字段，指定只下载该资源的一部分内容
+ * @param {String || Number} options.range.start 指定只下载该资源的一部分内容的开始位置
+ * @param {String || Number} options.range.end 指定只下载该资源的一部分内容的结束位置
+ * @param {Boolean} options.isPublic 可选，是否是公开资源，默认是false
 */
-SDK.prototype.download = function(url, path, range){
+SDK.prototype.download = function(options){
+  if (!options) return Promise.reject('options is required');
+  if (!options.url) return Promise.reject('options.url is required');
+
+  let { url, path, stream, range, isPublic } = options;
+
+  stream = stream? stream : (path? fs.createWriteStream(path) : null);
+
+  // 如果是公开资源，直接请求下载资源
+  if (isPublic) return rp({ url, pipe: stream });
+
+  // 私有资源需要获取下载token下载
+
   let RealDownloadUrl = token.download.call(this, { url: url });
 
-  let options = {
+  debug('私有资源下载完整url：' + RealDownloadUrl);
+
+  let request_options = {
+    url: RealDownloadUrl,
     method: 'GET',
-    url: RealDownloadUrl
+    pipe: stream
   };
 
-  // 分片下载
+  // 分片下载，用户可以在下载时设定该字段，指定只下载该资源的一部分内容
   if (range) {
-    options.headers = {
+    request_options.headers = {
       'Range': `bytes=${range.start}-${range.end}`
     };
   }
-  
-  return new Promise((resolve, reject) => {
-    const writeStream = fs.createWriteStream(path);
-    writeStream.on('finish', resolve);
-    writeStream.on('error', reject);
-    request(options).on('error', reject).pipe(writeStream);
-  });
+
+  return rp(request_options);
 };
 /**
  * 持久化处理
