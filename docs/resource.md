@@ -1,4 +1,4 @@
-## 资源操作使用预览
+## resource 资源操作
 
 ```javascript
 // 引入模块

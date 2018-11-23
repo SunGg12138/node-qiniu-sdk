@@ -1,14 +1,18 @@
-const _ = require('lodash');
-const qs = require('querystring');
+## statistic 数据统计
 
-module.exports = Statistic;
+```javascript
+// 引入模块
+const Qiniu = require('node-qiniu-sdk');
+// 配置你的qiniu
+const qiniu = new Qiniu('<Your AccessKey>', '<Your SecretKey>');
+
+// 所有的方法都返回promise，这里我就直接用await了
 
 /**
- * 对象储存-数据统计接口
- */
-function Statistic(sdk){
-  this.sdk = sdk;
-}
+ * 创建可管理的统计对象
+ * 官方文档：https://developer.qiniu.com/kodo/api/3906/statistic-interface
+*/
+let statistic = await qiniu.statistic();
 
 /**
  * 该接口可以获取标准存储的当前存储量。监控统计可能会延迟 1 天。
@@ -20,20 +24,11 @@ function Statistic(sdk){
  * @param {String} options.region 可选，存储区域
  * @return {Object} { times:[1502985600], datas:[0] } times: Unix 时间戳，单位为秒，datas: 存储量大小，单位为 Byte
  */
-Statistic.prototype.space = function(options){
-  if (!options) return Promise.reject('options is required');
-
-  // 挑出指定参数
-  options = _.pick(options, [ 'bucket', 'begin', 'end', 'g', 'region' ]);
-
-  let request_options = {
-    host: 'http://api.qiniu.com',
-    path: '/v6/space?' + qs.stringify(options),
-    method: 'GET'
-  };
-
-  return this.sdk.rs(request_options);
-};
+let result = await statistic.space({
+  begin: '20170818140000',
+  end: '20170818151000',
+  g: 'day'
+});
 
 /**
  * 该接口可以获取标准存储的文件数量。监控统计可能会延迟 1 天。
@@ -45,20 +40,11 @@ Statistic.prototype.space = function(options){
  * @param {String} options.region 可选，存储区域
  * @return {Object} { times:[1502985600], datas:[0] } times: Unix 时间戳，单位为秒，datas: 文件数量大小，单位为个
  */
-Statistic.prototype.count = function(options){
-  if (!options) return Promise.reject('options is required');
-
-  // 挑出指定参数
-  options = _.pick(options, [ 'bucket', 'begin', 'end', 'g', 'region' ]);
-
-  let request_options = {
-    host: 'http://api.qiniu.com',
-    path: '/v6/count?' + qs.stringify(options),
-    method: 'GET'
-  };
-
-  return this.sdk.rs(request_options);
-};
+let result = await statistic.count({
+  begin: '20170818140000',
+  end: '20170818151000',
+  g: 'day'
+});
 
 /**
  * 该接口可以获取低频存储的当前存储量。监控统计延迟大概 1 天。
@@ -72,20 +58,12 @@ Statistic.prototype.count = function(options){
  * @param {String} options.only_predel 可选，只显示低频存储提前删除的存储量，值为1
  * @return {Object} { times:[1502985600], datas:[0] } times: Unix 时间戳，单位为秒，datas: 存储量大小，单位为 Byte
  */
-Statistic.prototype.space_line = function(options){
-  if (!options) return Promise.reject('options is required');
-
-  // 挑出指定参数
-  options = _.pick(options, [ 'bucket', 'begin', 'end', 'g', 'region', 'no_predel', 'only_predel' ]);
-
-  let request_options = {
-    host: 'http://api.qiniu.com',
-    path: '/v6/space_line?' + qs.stringify(options),
-    method: 'GET'
-  };
-
-  return this.sdk.rs(request_options);
-};
+let result = await statistic.space_line({
+  begin: '20170818140000',
+  end: '20170818151000',
+  g: 'day',
+  only_predel: 1
+});
 
 /**
  * 该接口可以获取低频存储的文件数量。监控统计延迟大概 1 天。
@@ -97,20 +75,11 @@ Statistic.prototype.space_line = function(options){
  * @param {String} options.region 可选，存储区域
  * @return {Object} { times:[1502985600], datas:[0] } times: Unix 时间戳，单位为秒，datas: 文件数量大小，单位为个
  */
-Statistic.prototype.count_line = function(options){
-  if (!options) return Promise.reject('options is required');
-
-  // 挑出指定参数
-  options = _.pick(options, [ 'bucket', 'begin', 'end', 'g', 'region' ]);
-
-  let request_options = {
-    host: 'http://api.qiniu.com',
-    path: '/v6/count_line?' + qs.stringify(options),
-    method: 'GET'
-  };
-
-  return this.sdk.rs(request_options);
-};
+let result = await statistic.count_line({
+  begin: '20170818140000',
+  end: '20170818151000',
+  g: 'day'
+});
 
 /**
  * 该接口可以获取跨区域同步流量统计数据。监控统计延迟大概 5 分钟。
@@ -123,20 +92,12 @@ Statistic.prototype.count_line = function(options){
  * @param {String} options.$taskid 可选，任务 id
  * @return {Object} [{"time":"2017-08-01T00:00:00+08:00","values":{"size":0}}] times: 统计时间，size: 跨区域同步流量大小，单位 Byte
  */
-Statistic.prototype.blob_transfer = function(options){
-  if (!options) return Promise.reject('options is required');
-
-  // 挑出指定参数
-  options = _.pick(options, [ 'begin', 'end', 'g', 'select', '$is_oversea', '$taskid' ]);
-
-  let request_options = {
-    host: 'http://api.qiniu.com',
-    path: '/v6/blob_transfer?' + qs.stringify(options),
-    method: 'GET'
-  };
-
-  return this.sdk.rs(request_options);
-};
+let result = await statistic.blob_transfer({
+  begin: '20170818140000',
+  end: '20170818151000',
+  g: 'month',
+  select: 'size'
+});
 
 /**
  * 该接口可以获取存储类型转换请求次数。监控统计延迟大概 5 分钟。
@@ -149,20 +110,12 @@ Statistic.prototype.blob_transfer = function(options){
  * @param {String} options.$region 可选，存储区域
  * @return {Object} [{"time":"2017-08-01T00:00:00+08:00","values":{"hits":0}}] times: 统计时间，hits: 存储类型转换请求次数
  */
-Statistic.prototype.rs_chtype = function(options){
-  if (!options) return Promise.reject('options is required');
-
-  // 挑出指定参数
-  options = _.pick(options, [ 'begin', 'end', 'g', 'select', '$bucket', '$region' ]);
-
-  let request_options = {
-    host: 'http://api.qiniu.com',
-    path: '/v6/rs_chtype?' + qs.stringify(options),
-    method: 'GET'
-  };
-
-  return this.sdk.rs(request_options);
-};
+let result = await statistic.rs_chtype({
+  begin: '20170818140000',
+  end: '20170818151000',
+  g: 'month',
+  select: 'hits'
+});
 
 /**
  * 该接口可以获取存储类型转换请求次数。监控统计延迟大概 5 分钟。
@@ -178,20 +131,13 @@ Statistic.prototype.rs_chtype = function(options){
  * @param {String} options.$region 可选，存储区域
  * @return {Object} [{"time":"2017-08-01T00:00:00+08:00","values":{"hits":0}}] times: 统计时间，hits: 存储类型转换请求次数
  */
-Statistic.prototype.blob_io = function(options){
-  if (!options) return Promise.reject('options is required');
-
-  // 挑出指定参数
-  options = _.pick(options, [ 'begin', 'end', 'g', 'select', '$src', '$bucket', '$domain', '$ftype', '$region' ]);
-
-  let request_options = {
-    host: 'http://api.qiniu.com',
-    path: '/v6/blob_io?' + qs.stringify(options),
-    method: 'GET'
-  };
-
-  return this.sdk.rs(request_options);
-};
+let result = await statistic.blob_io({
+  begin: '20170818140000',
+  end: '20170818151000',
+  g: 'month',
+  select: 'hits',
+  $src: 'inner'
+});
 
 /**
  * 该接口可以获取 PUT 请求次数。监控统计延迟大概 5 分钟。
@@ -205,17 +151,10 @@ Statistic.prototype.blob_io = function(options){
  * @param {String} options.$region 可选，存储区域
  * @return {Object} [{"time":"2017-08-01T00:00:00+08:00","values":{"hits":0}}] times: 统计时间，hits: 存储类型转换请求次数
  */
-Statistic.prototype.rs_put = function(options){
-  if (!options) return Promise.reject('options is required');
-
-  // 挑出指定参数
-  options = _.pick(options, [ 'begin', 'end', 'g', 'select', '$bucket', '$ftype', '$region' ]);
-
-  let request_options = {
-    host: 'http://api.qiniu.com',
-    path: '/v6/rs_put?' + qs.stringify(options),
-    method: 'GET'
-  };
-
-  return this.sdk.rs(request_options);
-};
+let result = await statistic.rs_put({
+  begin: '20170818140000',
+  end: '20170818151000',
+  g: 'month',
+  select: 'hits'
+});
+```
