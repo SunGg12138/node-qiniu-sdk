@@ -1,5 +1,5 @@
 try {
-  const qiniu_config = require('./resource/qiniu.config');
+  require('./resource/qiniu.config');
 } catch (error) {
   throw new Error(`
   先配置你的/test/resource/qiniu.config.json文件再测试
@@ -23,38 +23,25 @@ const common = {
 
 describe('自定义扩展方法测试', function(){
   this.timeout(30000);
-  before(function(done){
+  before(async function(){
     // 随机个名字
     common.bucketName = new Date().getTime() + '';
     common.scope = common.bucketName + ':' + common.fileName;
 
-    qiniu.bucket(common.bucketName)
-    .mk()
-    .then(function(result){
-      debug('创建bucket：%s并返回：%s', common.bucketName, JSON.stringify(result));
-      done();
-    })
-    .catch(console.error);
+    let result = await qiniu.bucket(common.bucketName).mk();
+    debug('创建bucket：%s并返回：%s', common.bucketName, JSON.stringify(result));
   });
-  it('sliceUpload并发分片上传', function(done){
-    qiniu.file(common.scope)
-    .sliceUpload({ path: __dirname + '/resource/sliceUpload.test.zip', max: 2 })
-    .then(function(result){
-      debug('sliceUpload并发分片上传并返回：%s', JSON.stringify(result));
-      expect(result).to.be.an('object');
-      expect(result.hash).to.be.a('string');
-      expect(result.key).to.be.a('string');
-      done();
-    })
-    .catch(console.error);
+  it('sliceUpload并发分片上传', async function(){
+    let result = await qiniu.file(common.scope).sliceUpload({ path: __dirname + '/resource/sliceUpload.test.zip', max: 2 });
+    debug('sliceUpload并发分片上传并返回：%s', JSON.stringify(result));
+    expect(result).to.be.an('object');
+    expect(result.hash).to.be.a('string');
+    expect(result.key).to.be.a('string');
   });
-  after(function(done){
-    qiniu.bucket(common.bucketName)
-    .drop()
-    .then(function(result){
-      debug('删除Bucket并返回：%s', JSON.stringify(result));
-      done();
-    })
-    .catch(console.error);
+  after(async function(){
+    let result = await qiniu.bucket(common.bucketName).drop();
+    debug('删除Bucket并返回：%s', JSON.stringify(result));
+    expect(result).to.be.an('object');
+    expect(result.error).to.be.undefined;
   });
 });

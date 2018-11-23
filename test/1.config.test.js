@@ -1,5 +1,5 @@
 try {
-  const qiniu_config = require('./resource/qiniu.config');
+  require('./resource/qiniu.config');
 } catch (error) {
   throw new Error(`
   先配置你的/test/resource/qiniu.config.json文件再测试
@@ -21,12 +21,9 @@ describe('测试环境', function(){
     qiniu = new Qiniu(qiniu_config.AccessKey, qiniu_config.SecretKey);
   });
 
-  it('测试AccessKey、SecretKey是否正确', function(done){
-    qiniu.buckets()
-    .then(function(result){
-      expect(result).to.be.an('array');
-      done();
-    })
-    .catch(console.error);
+  it('测试AccessKey、SecretKey是否正确', async function(){
+    let result = await qiniu.buckets();
+    expect(result.error).to.be.undefined;
+    expect(result).to.be.an('array');
   });
 });

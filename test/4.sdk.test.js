@@ -1,5 +1,5 @@
 try {
-  const qiniu_config = require('./resource/qiniu.config');
+  require('./resource/qiniu.config');
 } catch (error) {
   throw new Error(`
   先配置你的/test/resource/qiniu.config.json文件再测试
@@ -20,28 +20,22 @@ const common = {
 };
 describe('SDK 相关方法测试', function(){
   this.timeout(20000);
-  before(function(done){
+  before(async function(){
     // 随机个名字
     common.bucketName = new Date().getTime() + '';
-    qiniu.bucket(common.bucketName)
-    .mk()
-    .then(function(result){
-      debug('创建bucket：%s并返回：%s', common.bucketName, JSON.stringify(result));
-      done();
-    })
-    .catch(console.error);
+    let result = await qiniu.bucket(common.bucketName).mk()
+    debug('创建bucket：%s并返回：%s', common.bucketName, JSON.stringify(result));
+    expect(result).to.be.an('object');
+    expect(result.error).to.be.undefined;
   });
-  it('buckets 获取 Bucket 列表', function(done){
-    qiniu.buckets()
-    .then(function(result){
-      debug('获取 Bucket 列表并返回：%s', JSON.stringify(result));
-      expect(result).to.be.an('array');
-      done();
-    })
-    .catch(console.error);
+  it('buckets 获取 Bucket 列表', async function(){
+    let result = await qiniu.buckets();
+    debug('获取 Bucket 列表并返回：%s', JSON.stringify(result));
+    expect(result.error).to.be.undefined;
+    expect(result).to.be.an('array');
   });
-  it('sisyphus 异步第三方资源抓取', function(done){
-    qiniu.sisyphus({
+  it('sisyphus 异步第三方资源抓取', async function(){
+    let result = await qiniu.sisyphus({
       body: {
         url: [
           'https://www.baidu.com/img/bd_logo1.png?qua=high',
@@ -49,15 +43,12 @@ describe('SDK 相关方法测试', function(){
         ],
         bucket: common.bucketName
       }
-    })
-    .then(function(result){
-      debug('异步第三方资源抓取并返回：%s', JSON.stringify(result));
-      expect(result).to.be.an('object');
-      done();
-    })
-    .catch(console.error);
+    });
+    debug('异步第三方资源抓取并返回：%s', JSON.stringify(result));
+    expect(result).to.be.an('object');
+    expect(result.error).to.be.undefined;
   });
-  it('batch 批量操作', function(done){
+  it('batch 批量操作', async function(){
     // 不需要管是否操作成功了
     // 只要有正确的返回数据就可以了
     let ops = [
@@ -67,22 +58,16 @@ describe('SDK 相关方法测试', function(){
       { _type: 'stat', bucket: common.bucketName, fileName: 'test-1.png' },
       { _type: 'delete', bucket: common.bucketName,fileName: 'test.js' }
     ]
-    qiniu.batch({ ops: ops })
-    .then(function(result){
-      debug('批量操作并返回：%s', JSON.stringify(result));
-      expect(result).to.be.an('array');
-      expect(ops.length === result.length).to.be.ok;
-      done();
-    })
-    .catch(console.error);
+    let result = await qiniu.batch({ ops: ops });
+    debug('批量操作并返回：%s', JSON.stringify(result));
+    expect(result.error).to.be.undefined;
+    expect(ops.length === result.length).to.be.ok;
+    expect(result).to.be.an('array');
   });
-  after(function(done){
-    qiniu.bucket(common.bucketName)
-    .drop()
-    .then(function(result){
-      debug('删除Bucket并返回：%s', JSON.stringify(result));
-      done();
-    })
-    .catch(console.error);
+  after(async function(){
+    let result = await qiniu.bucket(common.bucketName).drop();
+    debug('删除Bucket并返回：%s', JSON.stringify(result));
+    expect(result).to.be.an('object');
+    expect(result.error).to.be.undefined;
   });
 });

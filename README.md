@@ -1,6 +1,6 @@
 # node-qiniu-sdk
 
-使用Promise来操作七牛云，接口名称与官方接口对应
+使用 ES2017 async functions 来操作七牛云，接口名称与官方接口对应，轻松上手
 
 qiniu的官方sdk不太符合日常需要，所以有时间写了个模块，你也可去qiniu官方查看[官方SDK](https://github.com/qiniu/nodejs-sdk)
 
@@ -70,19 +70,9 @@ $ DEBUG=qiniu-sdk mocha
 1. 由于request提交content-type为text/plain时，会JSON.stringify，所以会多一对“"”分号
 2. request为防止url异常会把url给eccodeURIComponent
 
-这两点在某些请求时会出错，所以作了些修改
+这两点在某些请求时会出错
 
-现在的request引用的是我fork后修改过的，request模块我提交了我的代码，等待merge
-
-```javascript
-...
-"dependencies": {
-  "debug": "^3.1.0",
-  "request": "https://github.com/SunGg12138/request.git",
-  "request-promise": "^4.2.2"
-},
-...
-```
+1.1.3版本以后使用了新写的请求模块，node-request-slim。
 
 ## 官方文档快捷方式
 

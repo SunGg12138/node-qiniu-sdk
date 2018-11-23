@@ -6,7 +6,7 @@ const image = require('./lib/image');
 const resource = require('./lib/resource');
 const Extends = require('./lib/extends');
 const token = require('./lib/token');
-const request = require('request');
+const request = require('node-request-slim');
 const debug = require('debug')('qiniu-sdk');
 const rp = require('node-request-slim').promise;
 const querystring = require('querystring');
@@ -236,7 +236,7 @@ SDK.prototype.rs = function(options){
   };
 
   if (options.form) {
-    request_options.form = options.form
+    request_options.form = options.form;
   } else if (options.body) {
     request_options.body = typeof options.body === 'string'? options.body : JSON.stringify(options.body);
   } else {
