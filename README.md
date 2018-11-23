@@ -74,7 +74,7 @@ $ DEBUG=qiniu-sdk mocha
 
 #### image 图片处理介绍
 
-[图片处理参数详情](./docs/image.md)
+[图片处理参数详情](./docs/image.md#processing参数介绍)
 
 ```javascript
 const Qiniu = require('node-qiniu-sdk');
@@ -100,6 +100,8 @@ await Qiniu.image.processing(common.url, {
 <img src="http://pimnrbs1q.bkt.clouddn.com/file.image.test.jpg" width="300">
 
 - 处理后：
+
+由于旋转后背景色自动填充为白色，请到这个链接查看圆角效果：[链接](http://pimnrbs1q.bkt.clouddn.com/file.image.test.jpg?imageslim|imageView/0/w/200/h/300|imageMogr2/auto-orient/rotate/45/blur/20x2|watermark/1/image/aHR0cHM6Ly9vZHVtOWhlbGsucW5zc2wuY29tL3Fpbml1LWxvZ28ucG5n/ws/0.3|roundPic/radius/20)
 
 ![处理后](http://pimnrbs1q.bkt.clouddn.com/file.image.test.jpg?imageslim|imageView/0/w/200/h/300|imageMogr2/auto-orient/rotate/45/blur/20x2|watermark/1/image/aHR0cHM6Ly9vZHVtOWhlbGsucW5zc2wuY29tL3Fpbml1LWxvZ28ucG5n/ws/0.3|roundPic/radius/20)
 
