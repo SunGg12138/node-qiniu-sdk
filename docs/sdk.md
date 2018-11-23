@@ -49,11 +49,32 @@ await qiniu.batch({
 });
 
 /**
- * 下载文件
+ * 下载资源
  * 官方文档：https://developer.qiniu.com/kodo/manual/1232/download-process
- * 把http://***.com/test.png文件下载到本地，下载指定区域
- * 是基于流的
+ * @param {String} options.url 必选，下载的链接
+ * @param {String} options.path 可选，下载到本地的路径
+ * @param {Stream} options.stream 可选，下载的流
+ * @param {Object} options.range 可选，分片下载的区域，用户可以在下载时设定该字段，指定只下载该资源的一部分内容
+ * @param {String || Number} options.range.start 指定只下载该资源的一部分内容的开始位置
+ * @param {String || Number} options.range.end 指定只下载该资源的一部分内容的结束位置
+ * @param {Boolean} options.isPublic 可选，是否是公开资源，默认是false
 */
-await qiniu.download('http://***.com/test.png', __dirname + '/test.png', { start: 0, end: 10 });
-
+// 下载私有资源
+await qiniu.download({
+  url: 'http://***.com/test.png',
+  path: __dirname + '/test.png',
+  range: { start: 0, end: 10 }
+});
+// 下载公共资源
+await qiniu.download({
+  url: 'http://***.com/test.png',
+  path: __dirname + '/test.png',
+  isPublic: true
+});
+// 下载公共资源也可以不用设置'<Your AccessKey>', '<Your SecretKey>'
+await Qiniu.prototype.download({
+  url: 'http://***.com/test.png',
+  path: __dirname + '/test.png',
+  isPublic: true
+});
 ```

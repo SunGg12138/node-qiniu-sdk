@@ -83,7 +83,7 @@ describe('SDK 相关方法测试', function(){
   });
   it('download 公开资源下载到本地', async function(){
     let local_path = __dirname + '/resource/image.download.public.test.jpg';
-    await qiniu.download({
+    await Qiniu.prototype.download({
       url: common.url,
       isPublic: true,
       path: local_path
