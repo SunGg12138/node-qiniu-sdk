@@ -266,6 +266,8 @@ SDK.prototype.rs = function(options){
     request_options.headers['content-type'] = options['content-type'];
   }
 
+  console.log(request_options)
+
   // 发送请求
   return rp(request_options);
 };
