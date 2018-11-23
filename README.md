@@ -65,7 +65,9 @@ $ DEBUG=qiniu-sdk mocha
 [resource](./docs/resource.md) | 获取文件hash值、markdown转html、生成资源二维码、资源合并、资源压缩
 [sdk](./docs/sdk.md) | 获取Bucket列表、异步第三方资源抓取、文件批量操作、下载资源、持久化处理
 
-### image 图片处理
+#### image 图片处理介绍
+
+[图片处理参数详情](./docs/image.md)
 
 ```javascript
 const Qiniu = require('node-qiniu-sdk');
