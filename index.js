@@ -4,6 +4,7 @@ const CDN = require('./lib/cdn');
 const Bucket = require('./lib/bucket');
 const image = require('./lib/image');
 const resource = require('./lib/resource');
+const Statistic = require('./lib/statistic');
 const Extends = require('./lib/extends');
 const token = require('./lib/token');
 const request = require('node-request-slim');
@@ -47,6 +48,10 @@ SDK.prototype.bucket = function(bucketName){
 // 创建File类
 SDK.prototype.file = function(scope){
   return new File(scope, this);
+};
+// 创建Statistic类
+SDK.prototype.statistic = function(){
+  return new Statistic(this);
 };
 /**
  * 获取 Bucket 列表

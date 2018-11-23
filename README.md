@@ -4,6 +4,12 @@
 
 qiniu的官方sdk不太符合日常需要，所以有时间写了个模块，你也可去qiniu官方查看[官方SDK](https://github.com/qiniu/nodejs-sdk)
 
+模块主要包含七牛云以下产品与服务：
+  - [对象储存](https://developer.qiniu.com/kodo)
+  - [融合CDN](https://developer.qiniu.com/fusion)
+  - [智能多媒体API](https://developer.qiniu.com/dora)
+  - [内容审核](https://developer.qiniu.com/censor)
+
 ## 安装
 
 ```bash
@@ -58,11 +64,12 @@ $ DEBUG=qiniu-sdk mocha
 
 模块名称                 | 模块的功能
 ------------------------|-------------------------------------
-[bucket](./docs/bucket.md) | 储存空间创建、设置镜像源、设置访问权限、获取空间域名、资源列举、删除
-[file](./docs/file.md) | 文件上传、重命名、复制、删除、修改状态、更新生命周期、修改存储类型、资源元信息查询、资源元信息修改、第三方资源抓取、镜像资源更新、分片上传
-[cdn](./docs/cdn.md) | 日志下载、日志分析、缓存刷新、刷新查询、预取、预取查询、批量查询cdn带宽、批量查询cdn流量
-[image](./docs/image.md) | 获取图片基本信息、图片EXIF信息、图片平均色调信息，图像的瘦身处理、基本处理、高级处理、水印处理、圆角处理以及图片的审核、鉴黄、鉴暴恐、政治人物识别
-[resource](./docs/resource.md) | 获取文件hash值、markdown转html、生成资源二维码、资源合并、资源压缩
+[bucket](./docs/bucket.md) | 对象储存，储存空间创建、设置镜像源、设置访问权限、获取空间域名、资源列举、删除
+[file](./docs/file.md) | 对象储存，文件上传、重命名、复制、删除、修改状态、更新生命周期、修改存储类型、资源元信息查询、资源元信息修改、第三方资源抓取、镜像资源更新、分片上传
+[statistic](./docs/statistic.md) | 对象储存，数据统计接口
+[cdn](./docs/cdn.md) | 融合CDN，日志下载、日志分析、缓存刷新、刷新查询、预取、预取查询、批量查询cdn带宽、批量查询cdn流量
+[image](./docs/image.md) | 智能多媒体API，获取图片基本信息、图片EXIF信息、图片平均色调信息，图像的瘦身处理、基本处理、高级处理、水印处理、圆角处理以及图片的审核、鉴黄、鉴暴恐、政治人物识别
+[resource](./docs/resource.md) | 智能多媒体API，获取文件hash值、markdown转html、生成资源二维码、资源合并、资源压缩
 [sdk](./docs/sdk.md) | 获取Bucket列表、异步第三方资源抓取、文件批量操作、下载资源、持久化处理
 
 #### image 图片处理介绍
@@ -115,24 +122,4 @@ await Qiniu.image.processing(common.url, {
 
 ## LICENSE
 
-MIT License
-
-Copyright (c) 2018 Grand
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+MIT
