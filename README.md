@@ -76,6 +76,8 @@ await Qiniu.image.processing(common.url, {
   watermark: { image: 'https://odum9helk.qnssl.com/qiniu-logo.png', scale: 0.3 },  // 七牛云存储提供三种水印接口
   roundPic: { radius: 20 }  // 图片圆角处理
 
+  // 不指定path、stream、saveas会返回处理语句的url
+
   // 指定path或stream会保存到本地（path和stream原理相同）
   // path: __dirname + '/processing.test.jpg',
   // stream: fs.createWriteStream(__dirname + '/processing.test.jpg'),
@@ -90,7 +92,7 @@ await Qiniu.image.processing(common.url, {
 
 - 处理后：
 
-![处理后](http://pimnrbs1q.bkt.clouddn.com/processing.test.jpg)
+![处理后](http://pimnrbs1q.bkt.clouddn.com/file.image.test.jpg?imageslim|imageView/0/w/200/h/300|imageMogr2/auto-orient/rotate/45/blur/20x2|watermark/1/image/aHR0cHM6Ly9vZHVtOWhlbGsucW5zc2wuY29tL3Fpbml1LWxvZ28ucG5n/ws/0.3|roundPic/radius/20)
 
 ## package.json
 
