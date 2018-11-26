@@ -172,9 +172,6 @@ describe('image 相关方法测试', function(){
   // it('faceGroup 1:N人脸比对 => 显示所有人像库', async function(){
   //   let result = await Qiniu.image.faceGroup({
   //     op: 'groupList',
-  //     data: {
-  //       group_id: group_id
-  //     },
   //     sdk: qiniu
   //   });
   //   debug('faceGroup 1:N人脸比对 => 显示所有人像库并返回：%s', JSON.stringify(result));
@@ -272,15 +269,178 @@ describe('image 相关方法测试', function(){
   //   expect(result.error).to.be.undefined;
   // });
 
-  it('ocr身份证识别', async function(){
-    let result = await Qiniu.image.ocr({
-      uri: 'http://oayjpradp.bkt.clouddn.com/age_gender_test.png',
+  it('imageGroup 以图搜图 => 新建图像库', async function(){
+    // 设置全局group_id
+    group_id = Date.now().toString();
+
+    let result = await Qiniu.image.imageGroup({
+      op: 'newGroup',
+      data: {
+        group_id: group_id,
+        uris: [
+          {
+            "uri": 'http://oayjpradp.bkt.clouddn.com/Audrey_Hepburn.jpg',
+            "attribute": {
+              "id": '1',
+              "label": 'test1',
+              "desc": '测试图片'
+            }
+         }
+        ]
+      },
       sdk: qiniu
     });
-    debug('faceGroup 1:N人脸比对 => 删除人像库并返回：%s', JSON.stringify(result));
+    debug('imageGroup 以图搜图 => 新建图像库并返回：%s', JSON.stringify(result));
+    expect(result).to.be.an('object');
+    expect(result.errors[0] === null).to.be.ok;
+  });
+
+  it('imageGroup 以图搜图 => 添加图片', async function(){
+    let result = await Qiniu.image.imageGroup({
+      op: 'addImage',
+      data: {
+        group_id: group_id,
+        uris: [
+          {
+            "uri": 'http://oayjpradp.bkt.clouddn.com/Audrey_Hepburn.jpg',
+            "attribute": {
+              "id": '2',
+              "label": 'test2',
+              "desc": '测试图片2'
+            }
+         }
+        ]
+      },
+      sdk: qiniu
+    });
+    debug('imageGroup 以图搜图 => 添加图片并返回：%s', JSON.stringify(result));
+    expect(result).to.be.an('object');
+    expect(result.errors[0] === null).to.be.ok;
+  });
+
+  it('imageGroup 以图搜图 => 删除图片', async function(){
+    let result = await Qiniu.image.imageGroup({
+      op: 'deleteImage',
+      data: {
+        group_id: group_id,
+        images: [
+          '2'
+        ]
+      },
+      sdk: qiniu
+    });
+    debug('imageGroup 以图搜图 => 删除图片并返回：%s', JSON.stringify(result));
+    expect(result).to.be.an('object');
+    expect(result.error).to.be.undefined;
+  });
+
+  it('imageGroup 以图搜图 => 显示所有图像库', async function(){
+    let result = await Qiniu.image.imageGroup({
+      op: 'groupList',
+      sdk: qiniu
+    });
+    debug('imageGroup 以图搜图 => 显示所有图像库并返回：%s', JSON.stringify(result));
     expect(result).to.be.an('object');
     expect(result.code === 0).to.be.ok;
   });
+
+  it('imageGroup 以图搜图 => 显示指定图像库信息', async function(){
+    let result = await Qiniu.image.imageGroup({
+      op: 'groupInfo',
+      data: {
+        group_id: group_id
+      },
+      sdk: qiniu
+    });
+    debug('imageGroup 以图搜图 => 显示指定图像库信息并返回：%s', JSON.stringify(result));
+    expect(result).to.be.an('object');
+    expect(result.count).to.be.a('number');
+  });
+
+  it('imageGroup 以图搜图 => 显示所有图片', async function(){
+    let result = await Qiniu.image.imageGroup({
+      op: 'imageList',
+      data: {
+        group_id: group_id,
+        limit: 10
+      },
+      sdk: qiniu
+    });
+    debug('imageGroup 以图搜图 => 显示所有图片并返回：%s', JSON.stringify(result));
+    expect(result).to.be.an('object');
+    expect(result.code === 0).to.be.ok;
+  });
+
+  it('imageGroup 以图搜图 => 显示指定图片信息', async function(){
+    let result = await Qiniu.image.imageGroup({
+      op: 'imageInfo',
+      data: {
+        group_id: group_id,
+        id: '1'
+      },
+      sdk: qiniu
+    });
+    debug('imageGroup 以图搜图 => 显示指定图片信息并返回：%s', JSON.stringify(result));
+    expect(result).to.be.an('object');
+    expect(result.error).to.be.undefined;
+  });
+
+  it('imageGroup 以图搜图 => 图片搜索', async function(){
+    let result = await Qiniu.image.imageGroup({
+      op: 'search',
+      data: {
+        uri: 'http://oayjpradp.bkt.clouddn.com/Audrey_Hepburn.jpg',
+        params: {
+          groups: [
+            group_id
+          ],
+          limit: 5,
+          threshold: 0.85
+        }
+      },
+      sdk: qiniu
+    });
+    debug('imageGroup 以图搜图 => 图片搜索并返回：%s', JSON.stringify(result));
+    expect(result).to.be.an('object');
+    expect(result.code === 0).to.be.ok;
+  });
+
+  it('imageGroup 以图搜图 => 图片搜索（旧版本）', async function(){
+    let result = await Qiniu.image.imageGroup({
+      op: '_search',
+      data: {
+        group_id: group_id,
+        uri: 'http://oayjpradp.bkt.clouddn.com/Audrey_Hepburn.jpg'
+      },
+      sdk: qiniu
+    });
+    debug('imageGroup 以图搜图 => 图片搜索（旧版本）并返回：%s', JSON.stringify(result));
+    expect(result).to.be.an('object');
+    expect(result.code === 0).to.be.ok;
+  });
+
+  it('imageGroup 以图搜图 => 删除图像库', async function(){
+    let result = await Qiniu.image.imageGroup({
+      op: 'removeGroup',
+      data: {
+        group_id: group_id
+      },
+      sdk: qiniu
+    });
+    debug('imageGroup 以图搜图 => 删除图像库并返回：%s', JSON.stringify(result));
+    expect(result).to.be.an('object');
+    expect(result.error).to.be.undefined;
+  });
+
+  // it('ocr身份证识别', async function(){
+  //   let result = await Qiniu.image.ocr({
+  //     uri: 'http://oayjpradp.bkt.clouddn.com/age_gender_test.png',
+  //     sdk: qiniu
+  //   });
+  //   debug('ocr身份证识别并返回：%s', JSON.stringify(result));
+  //   expect(result).to.be.an('object');
+  //   expect(result.code === 0).to.be.ok;
+  // });
 
   // it('processing 获取图像处理的链接', async function(){
   //   let result = await Qiniu.image.processing(common.url, {
