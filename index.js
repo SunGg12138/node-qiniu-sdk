@@ -3,6 +3,7 @@ const File = require('./lib/file');
 const CDN = require('./lib/cdn');
 const Bucket = require('./lib/bucket');
 const image = require('./lib/image');
+const video = require('./lib/video');
 const resource = require('./lib/resource');
 const Statistic = require('./lib/statistic');
 const Extends = require('./lib/extends');
@@ -39,6 +40,9 @@ SDK.image = image;
 // 创建resource类
 // resource类是不需要token的，所以可以当做SDK的属性
 SDK.resource = resource;
+// 创建video类
+// video类是不需要token的，所以可以当做SDK的属性
+SDK.video = video;
 
 // 创建Bucket类
 SDK.prototype.bucket = function(bucketName){
