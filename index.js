@@ -3,7 +3,7 @@ const File = require('./lib/file');
 const CDN = require('./lib/cdn');
 const Bucket = require('./lib/bucket');
 const image = require('./lib/image');
-const video = require('./lib/video');
+const av = require('./lib/av');
 const resource = require('./lib/resource');
 const Statistic = require('./lib/statistic');
 const Extends = require('./lib/extends');
@@ -40,9 +40,9 @@ SDK.image = image;
 // 创建resource类
 // resource类是不需要token的，所以可以当做SDK的属性
 SDK.resource = resource;
-// 创建video类
-// video类是不需要token的，所以可以当做SDK的属性
-SDK.video = video;
+// 创建av类
+// av类是不需要token的，所以可以当做SDK的属性
+SDK.av = av;
 
 // 创建Bucket类
 SDK.prototype.bucket = function(bucketName){
@@ -241,6 +241,15 @@ SDK.prototype.getOperation = function(options){
       throw new Error('Invalid _type: ' + options._type);
   }
 };
+
+/**
+ * Tool: 开发者可以使用上传时返回的persistentId来随时查询数据处理的状态
+ * 官方文档：https://developer.qiniu.com/dora/manual/3686/pfop-directions-for-use#3
+ */
+SDK.prototype.fopStatus = SDK.fopStatus = function(persistentId){
+  return rp({ url: 'http://api.qiniu.com/status/get/prefop?id=' + persistentId });
+};
+
 /**
  * Tool: 管理系列统一发送请求
  */
@@ -269,8 +278,6 @@ SDK.prototype.rs = function(options){
   if (options['content-type']) {
     request_options.headers['content-type'] = options['content-type'];
   }
-
-  console.log(request_options)
 
   // 发送请求
   return rp(request_options);

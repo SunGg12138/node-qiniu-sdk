@@ -25,26 +25,26 @@ const common = {
 };
 describe('image 相关方法测试', function(){
   this.timeout(20000);
-  // before(async function(){
-  //   // 随机个名字
-  //   common.bucketName = new Date().getTime() + '';
-  //   common.scope = common.bucketName + ':' + common.fileName;
+  before(async function(){
+    // 随机个名字
+    common.bucketName = new Date().getTime() + '';
+    common.scope = common.bucketName + ':' + common.fileName;
 
-  //   // 创建储存空间
-  //   let r1 = await qiniu.bucket(common.bucketName).mk();
-  //   debug('创建bucket：%s并返回：%s', common.bucketName, JSON.stringify(r1));
+    // 创建储存空间
+    let r1 = await qiniu.bucket(common.bucketName).mk();
+    debug('创建bucket：%s并返回：%s', common.bucketName, JSON.stringify(r1));
 
-  //   // 获取空间域名
-  //   let r2 = await qiniu.bucket(common.bucketName).domain();
-  //   debug('获取空间域名返回：%s', JSON.stringify(r2));
-  //   common.domain = 'http://' + r2[0];
+    // 获取空间域名
+    let r2 = await qiniu.bucket(common.bucketName).domain();
+    debug('获取空间域名返回：%s', JSON.stringify(r2));
+    common.domain = 'http://' + r2[0];
 
-  //   // 上传图片
-  //   let r3 = await qiniu.file(common.scope).upload(__dirname + '/resource/file.image.test.jpg');
-  //   debug('上传图片返回：%s', JSON.stringify(r3));
-  //   // 文件路径
-  //   common.url = common.domain + '/' + common.fileName;
-  // });
+    // 上传图片
+    let r3 = await qiniu.file(common.scope).upload(__dirname + '/resource/file.image.test.jpg');
+    debug('上传图片返回：%s', JSON.stringify(r3));
+    // 文件路径
+    common.url = common.domain + '/' + common.fileName;
+  });
   // it('imageInfo 图片基本信息', async function(){
   //   let result = await Qiniu.image.imageInfo(common.url)
   //   debug('imageInfo返回：%s',JSON.stringify(result));
