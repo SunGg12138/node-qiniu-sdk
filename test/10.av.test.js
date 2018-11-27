@@ -9,6 +9,7 @@ try {
   `);
 }
 
+const fs = require('fs');
 const expect = require('chai').expect;
 const debug = require('debug')('test');
 const Qiniu = require('../index');
@@ -22,10 +23,12 @@ const common = {
   avthumbFileName: 'av_avthumb.mp4',
   watermarkFileName: 'av_watermark.mp4',
   concatFileName: 'av_concat.mp4',
-  scope: null
+  scope: null,
+  domain: null,
+  url: null
 };
 describe('av 相关方法测试', function(){
-  this.timeout(20000);
+  this.timeout(30000);
 
   before(async function(){
     // 随机个名字
@@ -39,6 +42,14 @@ describe('av 相关方法测试', function(){
     // 上传视频
     let r2 = await qiniu.file(common.scope).upload(__dirname + '/resource/av.mp4');
     debug('上传视频返回：%s', JSON.stringify(r2));
+
+    // 获取空间域名
+    let r3 = await qiniu.bucket(common.bucketName).domain();
+    debug('获取空间域名返回：%s', JSON.stringify(r3));
+    common.domain = 'http://' + r3[0];
+
+    // 文件路径
+    common.url = common.domain + '/' + common.fileName;
   });
 
   it('review 视频三鉴', async function(){
@@ -210,5 +221,123 @@ describe('av 相关方法测试', function(){
     // 接口响应code：https://developer.qiniu.com/dora/manual/5135/avsmart#4
     let status = await Qiniu.fopStatus(result.persistentId);
     expect(status.code === 0 || status.code === 1 || status.code === 2).to.be.ok;
+  });
+
+  it('avinfo 音视频元信息', async function(){
+    let result = await Qiniu.av.avinfo(common.url);
+    debug('avinfo 音视频元信息并返回：%s', JSON.stringify(result));
+    expect(result).to.be.an('object');
+  });
+
+  it('vframe 视频帧缩略图', async function(){
+    let result = await Qiniu.av.vframe({
+      pfop: qiniu.pfop({
+        bucketName: common.bucketName,
+        fileName: common.fileName,
+      }),
+      saveas: {
+        bucketName: common.bucketName,
+        fileName: 'av.png',
+      },
+      offset: 1,
+      format: 'png',
+      rotate: 180
+    });
+    debug('vframe 视频帧缩略图并返回：%s', JSON.stringify(result));
+    expect(result).to.be.an('object');
+    expect(result.persistentId).to.be.a('string');
+
+    // 查看fop的请求状态
+    // 接口响应code：https://developer.qiniu.com/dora/manual/5135/avsmart#4
+    let status = await Qiniu.fopStatus(result.persistentId);
+    expect(status.code === 0 || status.code === 1 || status.code === 2).to.be.ok;
+  });
+
+  it('vsample 视频采样缩略图', async function(){
+    let result = await Qiniu.av.vsample({
+      pfop: qiniu.pfop({
+        bucketName: common.bucketName,
+        fileName: common.fileName,
+      }),
+      pattern: 'vframe-$(count).png',
+      ss: '0',
+      format: 'png',
+      t: '10'
+    });
+    debug('vsample 视频采样缩略图并返回：%s', JSON.stringify(result));
+    expect(result).to.be.an('object');
+    expect(result.persistentId).to.be.a('string');
+
+    // 查看fop的请求状态
+    // 接口响应code：https://developer.qiniu.com/dora/manual/5135/avsmart#4
+    let status = await Qiniu.fopStatus(result.persistentId);
+    expect(status.code === 0 || status.code === 1 || status.code === 2).to.be.ok;
+  });
+
+  it('avvod 实时音视频转码', async function(){
+    let result = await Qiniu.av.avvod({
+      ab: '64k',
+      r: '24'
+    });
+    debug('avvod 实时音视频转码并返回：%s', JSON.stringify(result));
+    expect(result).to.be.a('string');
+  });
+
+  it('adapt 多码率自适应转码', async function(){
+    let result = await Qiniu.av.adapt({
+      pfop: qiniu.pfop({
+        bucketName: common.bucketName,
+        fileName: common.fileName,
+      }),
+      envBandWidth: '200000,800000',
+      multiPrefix: [
+        'adapt_test-a', 'adapt_test-b'
+      ]
+    });
+    debug('adapt 多码率自适应转码并返回：%s', JSON.stringify(result));
+    expect(result).to.be.an('object');
+    expect(result.persistentId).to.be.a('string');
+
+    // 查看fop的请求状态
+    // 接口响应code：https://developer.qiniu.com/dora/manual/5135/avsmart#4
+    let status = await Qiniu.fopStatus(result.persistentId);
+    expect(status.code === 0 || status.code === 1 || status.code === 2).to.be.ok;
+
+    adapt_persistentId = result.persistentId;
+  });
+
+  it('pm3u8 私有M3U8', async function(){
+
+    await new Promise(resolve => {
+      let timer = setInterval(async () => {
+        let status = await Qiniu.fopStatus(adapt_persistentId);
+        if (status.code === 0) {
+          clearInterval(timer);
+          resolve();
+        }
+      }, 100);
+    });
+
+    // 必须要设置私有化，否则会报错
+    let r1 = await qiniu.bucket(common.bucketName).private(1);
+    debug('设置Bucket访问权限并返回：%s', JSON.stringify(r1));
+
+    let r2 = await Qiniu.av.pm3u8({
+      url: common.domain + '/adapt_test-a.m3u8',
+      qiniu: qiniu,
+      pipe: fs.createWriteStream(__dirname + '/resource/pm3u8.txt')
+    });
+    debug('pm3u8 私有M3U8并返回：%s', JSON.stringify(r2));
+    
+    let data = fs.readFileSync(__dirname + '/resource/pm3u8.txt');
+    data = data.toString();
+    expect(data.indexOf('adapt_test-a_000000.ts') > -1).to.be.ok;
+  });
+  
+  after(async function(){
+    let result = await qiniu.bucket(common.bucketName).drop();
+    debug('删除Bucket并返回：%s', JSON.stringify(result));
+    expect(result).to.be.an('object');
+    expect(result.error).to.be.undefined;
   });
 });

@@ -10,3 +10,4 @@ test/resource/processing.test.jpg
 test/resource/qrcode.test.png
 image.download.public.test.jpg
 image.download.private.test.jpg
+test/resource/pm3u8.txt
