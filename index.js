@@ -193,6 +193,17 @@ SDK.prototype.pfop = function(options){
 
   return run;
 };
+
+/**
+ * 处理结果另存
+ * 官方文档：https://developer.qiniu.com/dora/manual/1305/processing-results-save-saveas
+ */
+SDK.prototype.saveas = function (bucket, fileName) {
+  return (url) => {
+    return token.saveas.call(this, url, bucket, fileName);
+  }
+};
+
 /**
  * Tool: 获取资源操作指令，只针对可批量操作的功能
 */
@@ -254,6 +265,7 @@ SDK.prototype.fopStatus = SDK.fopStatus = function(persistentId){
  * Tool: 管理系列统一发送请求
  */
 SDK.prototype.rs = function(options){
+
   // 生成管理凭证
   let access_token = options.access_token || token.access.call(this, options);
 
