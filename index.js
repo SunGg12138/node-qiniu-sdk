@@ -35,13 +35,13 @@ function SDK(AccessKey, SecretKey){
   });
 }
 // 创建image类
-// image类是不需要token的，所以可以当做SDK的属性
+// image类部分api需要持久化处理或处理结果另存
 SDK.image = image;
 // 创建resource类
-// resource类是不需要token的，所以可以当做SDK的属性
+// resource类部分api需要持久化处理或处理结果另存
 SDK.resource = resource;
 // 创建av类
-// av类是不需要token的，所以可以当做SDK的属性
+// av类部分api需要持久化处理或处理结果另存
 SDK.av = av;
 
 // 创建Bucket类

@@ -16,7 +16,25 @@ qiniu的官方sdk不太符合日常需要，所以有时间写了个模块，你
 $ npm install node-qiniu-sdk
 ```
 
-## 使用介绍
+## 测试用例
+
+目前测试用例共98个，如果api我还没有写出来，请先看对应的测试用例
+DEBUG=test mocha可以查看操作返回的具体的数据
+
+```bash
+# 先配置你的/test/resource/qiniu.config.json文件再测试
+# qiniu.config.json是放置AccessKey和SecretKey的配置文件
+# 格式与qiniu.config.default.json相同，你需要配置你的qiniu.config.json
+$ mocha
+
+# 如果想看返回的数据信息可以加上DEBUG=test
+$ DEBUG=test mocha
+
+# 如果想看操作信息可以加上DEBUG=qiniu-sdk（例如：分片上传的步骤）
+$ DEBUG=qiniu-sdk mocha
+```
+
+## 使用简介
 
 每个方法都与官网的对应，更多方法可参考[文档](./docs)
 
@@ -43,21 +61,6 @@ await file.upload({ path: '<本地文件路径>' });
 
 // 删除文件
 await file.delete();
-```
-
-## 测试
-
-```bash
-# 先配置你的/test/resource/qiniu.config.json文件再测试
-# qiniu.config.json是放置AccessKey和SecretKey的配置文件
-# 格式与qiniu.config.default.json相同，你需要配置你的qiniu.config.json
-$ mocha
-
-# 如果想看返回的数据信息可以加上DEBUG=test
-$ DEBUG=test mocha
-
-# 如果想看操作信息可以加上DEBUG=qiniu-sdk（例如：分片上传的步骤）
-$ DEBUG=qiniu-sdk mocha
 ```
 
 ## 各模块功能
