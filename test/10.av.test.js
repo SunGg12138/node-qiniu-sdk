@@ -78,8 +78,8 @@ describe('av 相关方法测试', function(){
     job_id = result.job;
   });
 
-  it('job 获取单个视频的识别结果', async function(){
-    let result = await Qiniu.av.job({
+  it('jobs 获取单个视频的识别结果', async function(){
+    let result = await Qiniu.av.jobs({
       sdk: qiniu,
       job_id: job_id
     });
@@ -87,6 +87,25 @@ describe('av 相关方法测试', function(){
     expect(result.error).to.be.undefined;
     expect(result.id === job_id).to.be.ok;
     expect(result.vid === vid).to.be.ok;
+  });
+
+  it('jobs 获取所有任务', async function(){
+    let result = await Qiniu.av.jobs({
+      sdk: qiniu
+    });
+    debug('job 获取所有任务结果并返回：%s', JSON.stringify(result));
+    expect(result.error).to.be.undefined;
+    expect(result).to.be.an('array');
+  });
+
+  it('jobs 获取指定状态的任务', async function(){
+    let result = await Qiniu.av.jobs({
+      sdk: qiniu,
+      status: 'RESCHEDULED'
+    });
+    debug('jobs 获取指定状态的任务并返回：%s', JSON.stringify(result));
+    expect(result.error).to.be.undefined;
+    expect(result).to.be.an('array');
   });
 
   it('avsmart 锐智转码', async function(){

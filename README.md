@@ -18,10 +18,10 @@ $ npm install node-qiniu-sdk
 
 ## 测试用例
 
-目前测试用例共99个，如果api我还没有写出来，请先看对应的测试用例
+目前测试用例共101个，如果api我还没有写出来，请先看对应的测试用例
 DEBUG=test mocha可以查看操作返回的具体的数据
 
-部分接口会出现超时的情况，再运行一遍就可以了
+av.pm3u8接口有可能出现超时的情况
 
 ```bash
 # 先配置你的/test/resource/qiniu.config.json文件再测试
@@ -111,9 +111,9 @@ await Qiniu.image.processing(common.url, {
 
 ![处理后](http://pimnrbs1q.bkt.clouddn.com/file.image.test.jpg?imageslim|imageView/0/w/200/h/300|imageMogr2/auto-orient/rotate/45/blur/20x2|watermark/1/image/aHR0cHM6Ly9vZHVtOWhlbGsucW5zc2wuY29tL3Fpbml1LWxvZ28ucG5n/ws/0.3|roundPic/radius/20)
 
-## package.json
+## 没有使用request模块
 
-1. 由于request提交content-type为text/plain时，会JSON.stringify，所以会多一对“"”分号
+1. 由于request模块在提交content-type为text/plain时，会对数据JSON.stringify，所以会多一对“"”分号
 2. request为防止url异常会把url给eccodeURIComponent
 
 这两点在某些请求时会出错
