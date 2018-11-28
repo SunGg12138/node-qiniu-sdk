@@ -64,6 +64,17 @@ describe('SDK 相关方法测试', function(){
     debug('异步第三方资源抓取并返回：%s', JSON.stringify(result));
     expect(result).to.be.an('object');
     expect(result.error).to.be.undefined;
+    expect(result.id).to.be.a('string');
+
+    // 任务id设置到全局
+    sisyphus_id = result.id;
+  });
+  it('sisyphusStatus 查看异步第三方资源抓取的状态', async function(){
+    let result = await qiniu.sisyphusStatus(sisyphus_id, 'z0');
+    debug('查看异步第三方资源抓取的状态并返回：%s', JSON.stringify(result));
+    expect(result).to.be.an('object');
+    expect(result.error).to.be.undefined;
+    expect(result.id).to.be.a('string');
   });
   it('batch 批量操作', async function(){
     // 不需要管是否操作成功了

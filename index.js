@@ -13,11 +13,12 @@ const rp = require('node-request-slim').promise;
 const querystring = require('querystring');
 const EncodedEntryURI = require('./lib/encrypt/EncodedEntryURI');
 const urlsafe_base64_encode = require('./lib/encrypt/urlsafe_base64_encode');
+const Zone = require('./lib/zone');
 
 module.exports = SDK;
 
 /**
- * 
+ * SDK类
  * @param {String} AccessKey 
  * @param {String} SecretKey 
  */
@@ -44,15 +45,23 @@ SDK.resource = resource;
 // av类部分api需要持久化处理或处理结果另存
 SDK.av = av;
 
-// 创建Bucket类
+/**
+ * 创建Bucket类
+ * @param {String} bucketName 储存桶名称
+ */
 SDK.prototype.bucket = function(bucketName){
   return new Bucket(bucketName.toString(), this);
 };
-// 创建File类
+/**
+ * 创建File类
+ * @param {String} scope 储存桶名称和文件名称的组合
+ */
 SDK.prototype.file = function(scope){
   return new File(scope, this);
 };
-// 创建Statistic类
+/**
+ * 创建Statistic类
+ */
 SDK.prototype.statistic = function(){
   return new Statistic(this);
 };
@@ -70,57 +79,115 @@ SDK.prototype.buckets = function(){
 /**
  * 异步第三方资源抓取
  * 官方文档：https://developer.qiniu.com/kodo/api/4097/asynch-fetch
+ * @param {String} options.zone 可选，异步任务的区域，默认为z0（华东地区）
+ * @param {Object} options.body 异步第三方资源抓取的请求体
+ * @param {String||Array} options.body.url 需要抓取的url,支持设置多个,以';'分隔
+ * @param {String} options.body.host 可选，从指定url下载数据时使用的Host
+ * @param {String} options.body.bucket 所在区域的bucket
+ * @param {String} options.body.key 可选，文件存储的key,不传则使用文件hash作为key
+ * @param {String} options.body.md5 可选，文件md5,传入以后会在存入存储时对文件做校验，校验失败则不存入指定空间
+ * @param {String} options.body.etag 可选，文件etag,传入以后会在存入存储时对文件做校验，校验失败则不存入指定空间,相关算法参考 https://github.com/qiniu/qetag
+ * @param {String} options.body.callbackurl 可选，回调URL，详细解释请参考上传策略中的callbackUrl（https://developer.qiniu.com/kodo/manual/1206/put-policy#put-policy-callback-url）
+ * @param {String} options.body.callbackbody 可选，回调Body，如果callbackurl不为空则必须指定。与普通上传一致支持魔法变量，详细解释请参考上传策略中的callbackBody
+ * @param {String} options.body.callbackbodytype 可选，回调Body内容类型,默认为"application/x-www-form-urlencoded"，详细解释请参考上传策略中的callbackBodyType
+ * @param {String} options.body.callbackhost 可选，回调时使用的Host
+ * @param {String} options.body.file_type 可选，存储文件类型 0:正常存储(默认),1:低频存储
+ * @param {String} options.body.ignore_same_key 可选，如果空间中已经存在同名文件则放弃本次抓取(仅对比Key，不校验文件内容)
 */
 SDK.prototype.sisyphus = function(options){
-  if (typeof options !== 'object')
-    return Promise.reject(new Error('options param must be an Object'));
-  if (typeof options.body !== 'object')
-    return Promise.reject(new Error('options.body param must be an Object'));
+  if (!options) return Promise.reject('options is required');
+  if (!options.body) return Promise.reject('options.body is required');
+  if (!options.body.url) return Promise.reject('options.body.url is required');
+
+  // 如果url是数组，使用';'分隔
+  if (Array.isArray(options.body.url)) options.body.url = options.body.url.join(';');
   
   // 默认是华东地区
   options.zone = options.zone || 'z0';
 
-  // 生成HTTP 请求鉴权
-  options.path = '/sisyphus/fetch';
-  options.host = 'api-' + options.zone + '.qiniu.com';
-  options.method = 'POST';
-  options['Content-Type'] = 'application/json';
-  if (Array.isArray(options.body.url)) options.body.url = options.body.url.join(';');
-  let qiniu_token = token.qiniu.call(this, options);
+  // 不存在的区域发出警告
+  Zone.warn(options.zone);
 
-  return rp({
+  // 构建请求参数
+  let request_options = {
+    url: 'http://api-' + options.zone + '.qiniu.com/sisyphus/fetch',
+    host: 'api-' + options.zone + '.qiniu.com',
+    path: '/sisyphus/fetch',
     method: 'POST',
-    url: 'http://api-' + options.zone + '.qiniu.com' + options.path,
+    body: options.body,
     headers: {
-      'Authorization': qiniu_token,
-      'content-type': 'application/json'
-    },
-    body: options.body
-  });
+      'Authorization': null,
+      'Content-Type': 'application/json'
+    }
+  };
+  // 生成HTTP 请求鉴权
+  request_options.headers['Authorization'] = token.qiniu.call(this, request_options);
+
+  return rp(request_options);
 };
+
+/**
+ * 查看异步第三方资源抓取的状态
+ * 官方文档：https://developer.qiniu.com/kodo/api/4097/asynch-fetch
+ * @param {String} id 异步任务id
+ * @param {String} zone 可选，异步任务的区域，默认为z0（华东地区）
+ */
+SDK.prototype.sisyphusStatus = function(id, zone){
+  if (!id) return Promise.reject('id is required');
+
+  // 默认是华东地区
+  zone = zone || 'z0';
+
+  // 不存在的区域发出警告
+  Zone.warn(zone);
+
+  // 构建请求参数
+  let request_options = {
+    url: 'http://api-' + zone + '.qiniu.com/sisyphus/fetch?id=' + id,
+    host: 'api-' + zone + '.qiniu.com',
+    path: '/sisyphus/fetch',
+    method: 'GET',
+    query: 'id=' + id,
+    headers: {
+      'Authorization': null,
+      'Content-Type': 'application/json'
+    }
+  };
+  // 生成HTTP 请求鉴权
+  request_options.headers['Authorization'] = token.qiniu.call(this, request_options);
+
+  return rp(request_options);
+};
+
 /**
  * 批量操作
  * 官方文档：https://developer.qiniu.com/kodo/api/1250/batch
+ * @param {Array} options.ops 操作符集合
+ * @param {String} options.ops.$._type 操作符类型，目前支持：delete、move、copy、chstatus、deleteAfterDays、chtype、stat、prefetch、chgm
  */
 SDK.prototype.batch = function(options){
+  if (!options) return Promise.reject('options is required');
   if (!Array.isArray(options.ops) || options.ops.length === 0)
-    return Promise.reject(new Error('options.ops must be an array and options.ops is not an empty array'));
+    return Promise.reject('options.ops must be an array and options.ops is not an empty array');
 
-  options.host = 'http://rs.qiniu.com';
-  options.path = '/batch';
+  let request_options = {
+    host: 'http://rs.qiniu.com',
+    path: '/batch'
+  };
   
   try {
     // 转换成['<Operation>', '<Operation>',...]的数组
     let ops = options.ops.map(item => {
       return this.getOperation(item);
     });
-    options.form = options.body = querystring.stringify({op: ops});
+    request_options.form = request_options.body = querystring.stringify({op: ops});
   } catch (error) {
     return Promise.reject(error);
   }
 
-  return this.rs(options);
+  return this.rs(request_options);
 };
+
 /**
  * 下载资源
  * 官方文档：https://developer.qiniu.com/kodo/manual/1232/download-process
@@ -164,9 +231,13 @@ SDK.prototype.download = function(options){
 
   return rp(request_options);
 };
+
 /**
  * 持久化处理
  * 官方文档：https://developer.qiniu.com/dora/manual/3686/pfop-directions-for-use
+ * @param {Boolean} isForce 是否强制执行（如果仓库中已经有相同的名字了，是否覆盖） 
+ * @param {String} notifyURL 用户接收视频处理结果的接口 URL。设置 persistentOps 字段时，本字段必须同时设置。未来该设置项将改为可选，如未设置，则只能使用返回的 persistentId 主动查询处理进度。
+ * @return {Function} 返回一个函数，可以发出指定持久化处理命令
  */
 SDK.prototype.pfop = function(options){
   options.host = 'http://api.qiniu.com';
@@ -189,7 +260,7 @@ SDK.prototype.pfop = function(options){
     run = null;
 
     return this.rs(options);
-  }
+  };
 
   return run;
 };
@@ -197,6 +268,8 @@ SDK.prototype.pfop = function(options){
 /**
  * 处理结果另存
  * 官方文档：https://developer.qiniu.com/dora/manual/1305/processing-results-save-saveas
+ * @param {String} bucket 储存桶名称
+ * @param {String} fileName 文件名称
  */
 SDK.prototype.saveas = function (bucket, fileName) {
   return (url) => {
@@ -249,13 +322,14 @@ SDK.prototype.getOperation = function(options){
 
       return operation;
     default:
-      throw new Error('Invalid _type: ' + options._type);
+      throw('无效的批量操作符 ' + options._type);
   }
 };
 
 /**
  * Tool: 开发者可以使用上传时返回的persistentId来随时查询数据处理的状态
  * 官方文档：https://developer.qiniu.com/dora/manual/3686/pfop-directions-for-use#3
+ * @param {String} persistentId 处理的任务id
  */
 SDK.prototype.fopStatus = SDK.fopStatus = function(persistentId){
   return rp({ url: 'http://api.qiniu.com/status/get/prefop?id=' + persistentId });

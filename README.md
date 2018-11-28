@@ -18,8 +18,10 @@ $ npm install node-qiniu-sdk
 
 ## 测试用例
 
-目前测试用例共98个，如果api我还没有写出来，请先看对应的测试用例
+目前测试用例共99个，如果api我还没有写出来，请先看对应的测试用例
 DEBUG=test mocha可以查看操作返回的具体的数据
+
+部分接口会出现超时的情况，再运行一遍就可以了
 
 ```bash
 # 先配置你的/test/resource/qiniu.config.json文件再测试
