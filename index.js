@@ -6,6 +6,7 @@ const image = require('./lib/image');
 const av = require('./lib/av');
 const resource = require('./lib/resource');
 const Statistic = require('./lib/statistic');
+const Pandora = require('./lib/pandora');
 const Extends = require('./lib/extends');
 const token = require('./lib/token');
 const debug = require('debug')('qiniu-sdk');
@@ -51,6 +52,12 @@ SDK.av = av;
  */
 SDK.prototype.bucket = function(bucketName){
   return new Bucket(bucketName.toString(), this);
+};
+/**
+ * 创建Pandora类
+ */
+SDK.prototype.pandora = function(){
+  return new Pandora(this);
 };
 /**
  * 创建File类
