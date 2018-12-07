@@ -6,6 +6,7 @@ const image = require('./lib/image');
 const av = require('./lib/av');
 const resource = require('./lib/resource');
 const Statistic = require('./lib/statistic');
+const Pandora = require('./lib/pandora');
 const Extends = require('./lib/extends');
 const token = require('./lib/token');
 const debug = require('debug')('qiniu-sdk');
@@ -75,6 +76,13 @@ SDK.prototype.buckets = function(){
     path: '/buckets'  // 指定请求的path
   };
   return this.rs(options);
+};
+/**
+ * 创建Pandora类
+ * 官方文档：https://developer.qiniu.com/insight
+ */
+SDK.prototype.pandora = function(){
+  return new Pandora(this);
 };
 /**
  * 异步第三方资源抓取
