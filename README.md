@@ -2,13 +2,14 @@
 
 使用 ES2017 async functions 来操作七牛云，接口名称与官方接口对应，轻松上手
 
-qiniu的官方sdk不太符合日常需要，所以有时间写了个模块，你也可去qiniu官方查看[官方SDK](https://github.com/qiniu/nodejs-sdk)
+我们许多项目都依托于七牛云，但是qiniu的官方sdk不太符合我们日常需要，所以写了此模块，你也可去qiniu官方查看[官方SDK](https://github.com/qiniu/nodejs-sdk)
 
 模块主要包含七牛云以下产品与服务：
   - [对象储存](https://developer.qiniu.com/kodo)
   - [融合CDN](https://developer.qiniu.com/fusion)
   - [智能多媒体API](https://developer.qiniu.com/dora)
   - [内容审核](https://developer.qiniu.com/censor)
+  - [智能日志管理平台](https://developer.qiniu.com/insight)
 
 ## 安装
 
@@ -76,6 +77,7 @@ await file.delete();
 [image](./docs/image.md) | 智能多媒体API | 获取图片基本信息、图片EXIF信息、图片平均色调信息，图像的瘦身处理、基本处理、高级处理、水印处理、圆角处理以及图片的审核、鉴黄、鉴暴恐、政治人物识别、人脸检测、1:1人脸比对、1:N人脸比对、以图搜图、OCR身份证识别
 [av](./docs/av.md)  |  智能多媒体API | 视频三鉴、获取单个视频的识别结果、锐智转码、普通音视频转码、音视频分段、音视频切片（HLS）、视频水印、音视频拼接、音视频元信息、视频帧缩略图、视频采样缩略图、实时音视频转码、多码率自适应转码、私有M3U8
 [resource](./docs/resource.md) | 智能多媒体API | 获取文件hash值、markdown转html、生成资源二维码、资源合并、资源压缩
+[pandora](./docs/pandora.md) | 智能日志管理平台 | 数据推送 API
 [sdk](./docs/sdk.md) | 对象储存、持久化处理、处理结果另存 | 获取Bucket列表、异步第三方资源抓取、文件批量操作、下载资源、持久化处理、处理结果另存
 
 #### image.processing图片处理介绍
