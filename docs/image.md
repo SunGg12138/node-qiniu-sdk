@@ -1,5 +1,136 @@
 ## image 图像操作
 
+- [image.imageInfo 图片基本信息](#图片基本信息)
+- [image.exif 图片EXIF信息](#图片EXIF信息)
+- [image.imageAve 图片平均色调](#图片平均色调)
+- [image.pulp 图片鉴黄](#图片鉴黄)
+- [image.terror 图片鉴暴恐](#图片鉴暴恐)
+- [image.politician 政治人物识别](#政治人物识别)
+- [image.review 图片审核](#图片审核)
+- [image.faceDetect 人脸检测](#人脸检测)
+- [image.faceSim 1:1人脸比对](#1:1人脸比对)
+- [image.faceGroup 1:N人脸比对](#1:N人脸比对)
+- [image.imageGroup 以图搜图](#以图搜图)
+- [image.ocr OCR身份证识别](#OCR身份证识别)
+- [image.processing 图片处理](#图片处理)
+
+### 图片基本信息
+
+image.imageInfo(url);
+
+[官方文档](https://developer.qiniu.com/dora/manual/1269/pictures-basic-information-imageinfo)
+
+有一个参数：
+  - url: string，必选，图片的url
+
+```javascript
+// 引入模块
+const Qiniu = require('node-qiniu-sdk');
+
+// 不需要设置'<Your AccessKey>', '<Your SecretKey>'
+await Qiniu.image.imageInfo('<URL>');
+```
+
+### 图片EXIF信息
+
+image.exif(url);
+
+[官方文档](https://developer.qiniu.com/dora/manual/1260/photo-exif-information-exif)
+
+有一个参数：
+  - url: string，必选，图片的url
+
+```javascript
+// 引入模块
+const Qiniu = require('node-qiniu-sdk');
+
+// 不需要设置'<Your AccessKey>', '<Your SecretKey>'
+await Qiniu.image.exif('<URL>');
+```
+
+### 图片平均色调
+
+image.imageAve(url);
+
+[官方文档](https://developer.qiniu.com/dora/manual/1268/image-average-hue-imageave)
+
+有一个参数：
+  - url: string，必选，图片的url
+
+```javascript
+// 引入模块
+const Qiniu = require('node-qiniu-sdk');
+
+// 不需要设置'<Your AccessKey>', '<Your SecretKey>'
+await Qiniu.image.imageAve('<URL>');
+```
+
+### 图片鉴黄
+
+image.pulp(url);
+
+[官方文档](https://developer.qiniu.com/dora/manual/3701/ai-pulp)
+
+有一个参数：
+  - url: string，必选，图片的url
+
+```javascript
+// 引入模块
+const Qiniu = require('node-qiniu-sdk');
+
+// 不需要设置'<Your AccessKey>', '<Your SecretKey>'
+await Qiniu.image.pulp('<URL>');
+```
+
+### 图片鉴暴恐
+
+image.terror(url);
+
+[官方文档](https://developer.qiniu.com/dora/manual/3918/terror)
+
+有一个参数：
+  - url: string，必选，图片的url
+
+```javascript
+// 引入模块
+const Qiniu = require('node-qiniu-sdk');
+
+// 不需要设置'<Your AccessKey>', '<Your SecretKey>'
+await Qiniu.image.terror('<URL>');
+```
+
+### 政治人物识别
+
+image.politician(url);
+
+[官方文档](https://developer.qiniu.com/dora/manual/3922/politician)
+
+有一个参数：
+  - url: string，必选，图片的url
+
+```javascript
+// 引入模块
+const Qiniu = require('node-qiniu-sdk');
+
+// 不需要设置'<Your AccessKey>', '<Your SecretKey>'
+await Qiniu.image.politician('<URL>');
+```
+
+### 图片审核
+
+image.review(options);
+
+[官方文档](https://developer.qiniu.com/dora/manual/4252/image-review)
+
+options对象 有4个参数属性：
+  - sdk: object，必选，本模块的实例
+  - uri: string，必选，
+    图片资源。支持两种资源表达方式：
+      1. 网络图片URL地址；
+      2. 图片 base64 编码字符串，需在编码字符串前加上前缀 data:application/octet-stream;base64, 例：data:application/octet-stream;base64,xxx
+  - type: array，可选，选择的审核类型，可选项：pulp/terror/politician。默认选择全部 pulp/terror/politician
+  - detail: bool，仅当 params.type 是terror时有效，用于判断是否返回暴恐的详细分类结果。true表示返回详细分类结果，false表示不返回详细分类结果。默认是false
+
 ```javascript
 // 引入模块
 const Qiniu = require('node-qiniu-sdk');
@@ -7,72 +138,146 @@ const Qiniu = require('node-qiniu-sdk');
 // 配置你的qiniu
 const qiniu = new Qiniu('<Your AccessKey>', '<Your SecretKey>');
 
-// 所有的方法都返回promise，这里我就直接用await了
-
-// 创建可管理的image对象
-// 图像的操作前必须要配置图像的URL
-// URL需要是完整的
-// 图像操作部分API不需要token，不用配置你的AccessKey和SecretKey，直接使用就可以
-
-// 获取图片基本信息
-// 官方文档：https://developer.qiniu.com/dora/manual/1269/pictures-basic-information-imageinfo
-await Qiniu.image.imageInfo('<URL>');
-
-// 图片EXIF信息
-// 官方文档：https://developer.qiniu.com/dora/manual/1260/photo-exif-information-exif
-await Qiniu.image.exif('<URL>');
-
-// 图片平均色调信息
-// 官方文档：https://developer.qiniu.com/dora/manual/1268/image-average-hue-imageave
-await Qiniu.image.imageAve('<URL>');
-
-// 图片鉴黄
-// 官方文档：https://developer.qiniu.com/dora/manual/3701/ai-pulp
-await Qiniu.image.pulp('<URL>');
-
-// 图片鉴暴恐
-// 官方文档：https://developer.qiniu.com/dora/manual/3918/terror
-await Qiniu.image.terror('<URL>');
-
-// 政治人物识别
-// 官方文档：https://developer.qiniu.com/dora/manual/3922/politician
-await Qiniu.image.politician('<URL>');
-
-// 图片审核
-// 官方文档：https://developer.qiniu.com/dora/manual/4252/image-review
 await Qiniu.image.review({
-  uri: '<URL>',
+  uri: '<储存空间的图片的URL>',
+  type: [ 'pulp', 'terror', 'politician' ],
+  detail: true,
   sdk: qiniu
-});
-
-// 图像处理
-// mageView 官方文档：https://developer.qiniu.com/dora/manual/1279/basic-processing-images-imageview2
-// imageMogr 官方文档：https://developer.qiniu.com/dora/manual/1270/the-advanced-treatment-of-images-imagemogr2
-// watermark 官方文档：https://developer.qiniu.com/dora/manual/1316/image-watermarking-processing-watermark
-// roundPic 官方文档：https://developer.qiniu.com/dora/manual/4083/image-rounded-corner
-//
-// 如果指定path或stream会进行流操作写成图片，否则只会输出请求的url
-await Qiniu.image.processing('<URL>', {
-  imageslim: true,
-  imageView: { w: 200, h: 300 },
-  imageMogr: { blur: '20x2', rotate: 45 },
-  watermark: { image: 'https://odum9helk.qnssl.com/qiniu-logo.png', scale: 0.3 },
-  roundPic: { radius: 20 },
-  path: __dirname + '/resource/processing.test.jpg'
-});
-
-// 你也可以使用saveas(处理结果另存)来直接保存在储存空间里
-await Qiniu.image.processing('<URL>', {
-  imageslim: true,
-  imageView: { w: 200, h: 300 },
-  imageMogr: { blur: '20x2', rotate: 45 },
-  watermark: { image: 'https://odum9helk.qnssl.com/qiniu-logo.png', scale: 0.3 },
-  roundPic: { radius: 20 },
-  saveas: qiniu.saveas('bucket:key.jpg')
 });
 ```
 
-### processing参数介绍
+### 人脸检测
+
+image.faceDetect(options);
+
+[官方文档](https://developer.qiniu.com/dora/manual/4281/face-detection)
+
+options对象 有4个参数属性：
+  - sdk: object，必选，本模块的实例
+  - uri: string, 必选，图片的url
+
+```javascript
+// 引入模块
+const Qiniu = require('node-qiniu-sdk');
+
+// 配置你的qiniu
+const qiniu = new Qiniu('<Your AccessKey>', '<Your SecretKey>');
+
+// 进行人脸检测请求
+await Qiniu.image.faceDetect({
+  uri: 'http://oayjpradp.bkt.clouddn.com/Audrey_Hepburn.jpg',
+  sdk: qiniu
+});
+```
+
+### 1:1人脸比对
+
+image.faceSim(options);
+
+[官方文档](https://developer.qiniu.com/dora/manual/4282/face-sim)
+
+options对象 有4个参数属性：
+  - sdk: object，必选，本模块的实例
+  - uris: string, 必选，对比的两张图片的url
+
+```javascript
+// 引入模块
+const Qiniu = require('node-qiniu-sdk');
+
+// 配置你的qiniu
+const qiniu = new Qiniu('<Your AccessKey>', '<Your SecretKey>');
+
+// 进行1:1人脸比对请求
+await Qiniu.image.faceSim({
+  uris: [
+    { uri: 'http://oayjpradp.bkt.clouddn.com/Audrey_Hepburn.jpg' },
+    { uri: 'http://oayjpradp.bkt.clouddn.com/Audrey_Hepburn.jpg' }
+  ],
+  sdk: qiniu
+});
+```
+
+### 1:N人脸比对
+
+image.faceGroup(options);
+
+[官方文档](https://developer.qiniu.com/dora/manual/4438/face-recognition)
+
+options对象 有4个参数属性：
+  - sdk: object，必选，本模块的实例
+  - op: string, 必选，1:N人脸比对操作符
+  - data: object, 必选，操作符操作的参数
+
+操作符        | 说明
+-------------|----------------
+newGroup     | 新建人像库
+addFace      | 添加人脸
+deleteFace   | 删除人脸
+groupList    | 显示所有人像库
+groupInfo    | 显示指定人像库信息
+faceList     | 显示所有人脸
+faceInfo     | 显示指定人脸信息
+search       | 人脸搜索
+_search      | 人脸搜索（旧版本）
+removeGroup  | 删除人像库
+
+操作详情请查阅 [6.image.test.js](../test/6.image.test.js) 103行~270行
+
+### 以图搜图
+
+image.imageGroup(options);
+
+[官方文档](https://developer.qiniu.com/dora/manual/4680/image-search)
+
+options对象 有4个参数属性：
+  - sdk: object，必选，本模块的实例
+  - op: string, 必选，1:N人脸比对操作符
+  - data: object, 必选，操作符操作的参数
+
+操作符        | 说明
+-------------|----------------
+newGroup     | 新建图像库
+addImage     | 添加图片
+deleteImage  | 删除图片
+groupList    | 显示所有图像库
+groupInfo    | 显示指定图像库信息
+imageList    | 显示所有图片
+imageInfo    | 显示指定图片信息
+search       | 图片搜索
+_search      | 图片搜索（旧版本）
+removeGroup  | 删除图像库
+
+操作详情请查阅 [6.image.test.js](../test/6.image.test.js) 272行~433行
+
+### OCR身份证识别
+
+image.ocr(options);
+
+[官方文档](https://developer.qiniu.com/dora/manual/4276/ocr-sari-idcard)
+
+options对象 有4个参数属性：
+  - sdk: object，必选，本模块的实例
+  - uri: string, 必选，对比的两张图片的url
+
+```javascript
+// 引入模块
+const Qiniu = require('node-qiniu-sdk');
+
+// 配置你的qiniu
+const qiniu = new Qiniu('<Your AccessKey>', '<Your SecretKey>');
+
+// 进行ocr身份证识别
+await Qiniu.image.ocr({
+  uri: 'http://pimnrbs1q.bkt.clouddn.com/ocr2.jpg',
+  sdk: qiniu
+});
+```
+
+### 图片处理
+
+[官方文档](https://developer.qiniu.com/dora/manual/3683/img-directions-for-use)
+
+操作详情请查阅 [6.image.test.js](../test/6.image.test.js) 445行~479行
 
 ```javascript
 /**

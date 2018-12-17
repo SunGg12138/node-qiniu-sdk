@@ -434,7 +434,7 @@ describe('image 相关方法测试', function(){
 
   it('ocr身份证识别', async function(){
     let result = await Qiniu.image.ocr({
-      uri: 'http://oayjpradp.bkt.clouddn.com/age_gender_test.png',
+      uri: 'http://pimnrbs1q.bkt.clouddn.com/ocr2.jpg',
       sdk: qiniu
     });
     debug('ocr身份证识别并返回：%s', JSON.stringify(result));
