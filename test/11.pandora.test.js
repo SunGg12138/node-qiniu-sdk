@@ -22,7 +22,6 @@ describe('pandora 相关方法测试', function(){
     pandora = qiniu.pandora();
   });
   it('send 数据推送', async function(){
-    let pandora = qiniu.pandora();
     let result = await pandora.send({
       repoName: Date.now() + '',
       content: [
