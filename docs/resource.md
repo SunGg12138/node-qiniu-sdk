@@ -39,8 +39,9 @@ options对象 有4个参数属性：
 ```javascript
 // 引入模块
 const Qiniu = require('node-qiniu-sdk');
+// 配置你的qiniu
+const qiniu = new Qiniu('<Your AccessKey>', '<Your SecretKey>');
 
-// 不需要设置'<Your AccessKey>', '<Your SecretKey>'
 await Qiniu.resource.concat({
   mimeType: 'text/markdown',
   urls: [
@@ -78,6 +79,8 @@ options对象 有4个参数属性：
 ```javascript
 // 引入模块
 const Qiniu = require('node-qiniu-sdk');
+// 配置你的qiniu
+const qiniu = new Qiniu('<Your AccessKey>', '<Your SecretKey>');
 
 await Qiniu.resource.mkzip({
   mode: 2,
@@ -137,6 +140,8 @@ resource.qrcode(url, options);
 ```javascript
 // 引入模块
 const Qiniu = require('node-qiniu-sdk');
+// 配置你的qiniu
+const qiniu = new Qiniu('<Your AccessKey>', '<Your SecretKey>');
 
 // 生成资源二维码，并进行操作
 await Qiniu.resource.qrcode('<储存空间文件的url>', {
