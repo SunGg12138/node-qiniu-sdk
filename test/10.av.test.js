@@ -344,7 +344,7 @@ describe('av 相关方法测试', function(){
     let r2 = await Qiniu.av.pm3u8({
       url: common.domain + '/adapt_test-a.m3u8',
       qiniu: qiniu,
-      pipe: fs.createWriteStream(__dirname + '/resource/pm3u8.txt')
+      path: __dirname + '/resource/pm3u8.txt'
     });
     debug('pm3u8 私有M3U8并返回：%s', JSON.stringify(r2));
     
