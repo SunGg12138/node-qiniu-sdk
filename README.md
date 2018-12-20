@@ -105,13 +105,13 @@ await Qiniu.image.processing(common.url, {
 ```
 - 处理前：
 
-<img src="http://pimnrbs1q.bkt.clouddn.com/file.image.test.jpg" width="300">
+<img src="./docs/static/file.image.test.jpg" width="300">
 
 - 处理后：
 
-由于旋转后背景色自动填充为白色，请到这个链接查看圆角效果：[链接](http://pimnrbs1q.bkt.clouddn.com/processing.test.jpg)
+由于旋转后背景色自动填充为白色，请到这个链接查看圆角效果：[链接](./docs/static/processing.test.jpg)
 
-![处理后](http://pimnrbs1q.bkt.clouddn.com/processing.test.jpg)
+![处理后](./docs/static/processing.test.jpg)
 
 ## 没有使用request模块
 
