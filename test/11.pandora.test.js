@@ -21,18 +21,22 @@ describe('pandora 相关方法测试', function(){
   before(async function(){
     pandora = qiniu.pandora();
   });
-  it('send 数据推送', async function(){
-    let result = await pandora.send({
+  it('send 数据推送', function(done){
+    pandora.send({
       repoName: Date.now() + '',
       content: [
         { userName: '小张', age: 12, addresses: "beijing"},
         { userName: '小王', age: 13, addresses: "hangzhou"}
       ]
+    })
+    .catch(function(data){
+      debug('send 数据推送并返回：%s', JSON.stringify(data.body));
+      // 因为repoName是不存在的statusCode为404，会报错的，所以这里catch了
+      // E18102这个错误只是提示没有repo，但是操作是正确的没有问题的
+      expect(data.statusCode === 404).to.be.ok;
+      expect(/E18102: The specified repo ".+" does not exist/.test(data.body.error)).to.be.ok;
+      done();
     });
-    debug('send 数据推送并返回：%s', JSON.stringify(result));
-    // E18102这个错误只是提示没有repo，但是操作是正确的
-    if (result.error && !/E18102: The specified repo ".+" does not exist/.test(result.error)) {
-      expect(result.error).to.be.undefined;
-    }
+
   });
 });

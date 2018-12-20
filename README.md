@@ -66,6 +66,34 @@ await file.upload({ path: '<本地文件路径>' });
 await file.delete();
 ```
 
+## 请求错误
+
+如果请求时，七牛云响应了错误信息（statusCode不为200或298）时，操作会抛出异常，这里用pandora推送数据失败举例：
+
+其它错误码信息，请查看[错误码快查](#错误码快查)
+
+```javascript
+try {
+  await pandora.send({
+    // 前提是不存在名字为test的repo
+    repoName: 'test',
+    content: [
+      { userName: '小张', age: 12, addresses: "beijing"},
+      { userName: '小王', age: 13, addresses: "hangzhou"}
+    ]
+  });
+} catch(error) {
+  // error信息如下：
+  // {
+  //   statusCode: 404,
+  //   body: {
+  //     error: 'E18102: The specified repo "test" does not exist'
+  //   },
+  //   errmsg:	'资源不存在，包括空间资源不存在；镜像源资源不存在。'
+  // }
+}
+```
+
 ## 各模块功能
 
 模块名称                 |      所属产品或服务        | 模块的功能
@@ -123,6 +151,8 @@ await Qiniu.image.processing(common.url, {
 1.1.3版本以后使用了新写的请求模块，node-request-slim。
 
 ## 错误码快查
+
+[官方文档](https://developer.qiniu.com/kodo/api/3928/error-responses)
 
 HTTP状态码               | 说明
 ------------------------|----------------------

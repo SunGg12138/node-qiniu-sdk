@@ -239,6 +239,7 @@ describe('av 相关方法测试', function(){
     // 查看fop的请求状态
     // 接口响应code：https://developer.qiniu.com/dora/manual/5135/avsmart#4
     let status = await Qiniu.fopStatus(result.persistentId);
+    debug('concat 查看fop的请求状态并返回：%s', JSON.stringify(status));
     expect(status.code === 0 || status.code === 1 || status.code === 2).to.be.ok;
   });
 

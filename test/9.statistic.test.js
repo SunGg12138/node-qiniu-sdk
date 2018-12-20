@@ -18,62 +18,74 @@ const qiniu = new Qiniu(qiniu_config.AccessKey, qiniu_config.SecretKey);
 describe('数据统计接口', function(){
   this.timeout(30000);
   it('space，获取标准存储的当前存储量', async function(){
-    let result = await qiniu.statistic().space({
-      begin: '20170818140000',
-      end: '20170818151000',
-      g: 'day'
-    });
-    debug('返回：' + JSON.stringify(result));
-    expect(result).to.be.an('object');
-    if (result.error !== "mergeapi: unmatched times") {
+    try {
+      let result = await qiniu.statistic().space({
+        begin: '20170818140000',
+        end: '20170818151000',
+        g: 'day'
+      });
+      debug('返回：' + JSON.stringify(result));
+      expect(result).to.be.an('object');
       expect(result.error).to.be.undefined;
       expect(result.times).to.be.an('array');
       expect(result.datas).to.be.an('array');
+    } catch (errData) {
+      // 经过测试error="mergeapi: unmatched times"时，可以算作成功
+      expect(errData.body.error === "mergeapi: unmatched times").to.be.ok;
     }
   });
 
   it('count 获取标准存储的文件数量', async function(){
-    let result = await qiniu.statistic().count({
-      begin: '20170818140000',
-      end: '20170818151000',
-      g: 'day'
-    });
-    debug('返回：' + JSON.stringify(result));
-    expect(result).to.be.an('object');
-    if (result.error !== "mergeapi: unmatched times") {
+    try {
+      let result = await qiniu.statistic().count({
+        begin: '20170818140000',
+        end: '20170818151000',
+        g: 'day'
+      });
+      debug('返回：' + JSON.stringify(result));
+      expect(result).to.be.an('object');
       expect(result.error).to.be.undefined;
       expect(result.times).to.be.an('array');
       expect(result.datas).to.be.an('array');
+    } catch (errData) {
+      // 经过测试error="mergeapi: unmatched times"时，可以算作成功
+      expect(errData.body.error === "mergeapi: unmatched times").to.be.ok;
     }
   });
 
   it('space_line 获取低频存储的当前存储量', async function(){
-    let result = await qiniu.statistic().space_line({
-      begin: '20170818140000',
-      end: '20170818151000',
-      g: 'day',
-      only_predel: 1
-    });
-    debug('返回：' + JSON.stringify(result));
-    expect(result).to.be.an('object');
-    if (result.error !== "mergeapi: unmatched times") {
+    try {
+      let result = await qiniu.statistic().space_line({
+        begin: '20170818140000',
+        end: '20170818151000',
+        g: 'day',
+        only_predel: 1
+      });
+      debug('返回：' + JSON.stringify(result));
+      expect(result).to.be.an('object');
       expect(result.error).to.be.undefined;
       expect(result.times).to.be.an('array');
       expect(result.datas).to.be.an('array');
+    } catch (errData) {
+      // 经过测试error="mergeapi: unmatched times"时，可以算作成功
+      expect(errData.body.error === "mergeapi: unmatched times").to.be.ok;
     }
   });
 
   it('count_line 获取低频存储的当前存储量', async function(){
-    let result = await qiniu.statistic().count_line({
-      begin: '20170818140000',
-      end: '20170818151000',
-      g: 'day'
-    });
-    debug('返回：' + JSON.stringify(result));
-    expect(result).to.be.an('object');
-    if (result.error !== "mergeapi: unmatched times") {
+    try {
+      let result = await qiniu.statistic().count_line({
+        begin: '20170818140000',
+        end: '20170818151000',
+        g: 'day'
+      });
+      debug('返回：' + JSON.stringify(result));
+      expect(result).to.be.an('object');
       expect(result.error).to.be.undefined;
       expect(result.datas).to.be.an('array');
+    } catch (errData) {
+      // 经过测试error="mergeapi: unmatched times"时，可以算作成功
+      expect(errData.body.error === "mergeapi: unmatched times").to.be.ok;      
     }
   });
 
