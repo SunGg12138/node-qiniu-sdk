@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "debug": "^3.1.0",
-    "delegates": "^1.0.0",
     "lodash": "^4.17.11",
     "node-request-slim": "^1.0.4"
   },

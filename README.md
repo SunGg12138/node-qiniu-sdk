@@ -19,6 +19,8 @@ $ npm install node-qiniu-sdk
 
 ## 测试用例
 
+某些请求是需要人民币的，不要频繁测试
+
 目前测试用例共102个，如果api我还没有写出来，请先看对应的测试用例
 DEBUG=test mocha可以查看操作返回的具体的数据
 
@@ -36,6 +38,8 @@ $ DEBUG=test mocha
 # 如果想看操作信息可以加上DEBUG=qiniu-sdk（例如：分片上传的步骤）
 $ DEBUG=qiniu-sdk mocha
 ```
+
+
 
 ## 使用简介
 
