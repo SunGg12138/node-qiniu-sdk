@@ -5,11 +5,11 @@
 qiniu的官方sdk不太符合日常需要，所以有时间写了个模块，你也可去qiniu官方查看[官方SDK](https://github.com/qiniu/nodejs-sdk)
 
 模块主要包含七牛云以下产品与服务：
-  - [对象储存](https://developer.qiniu.com/kodo)
-  - [融合CDN](https://developer.qiniu.com/fusion)
-  - [智能多媒体API](https://developer.qiniu.com/dora)
-  - [内容审核](https://developer.qiniu.com/censor)
-  - [智能日志管理平台](https://developer.qiniu.com/insight)
+  - [对象储存 官方文档](https://developer.qiniu.com/kodo)
+  - [融合CDN 官方文档](https://developer.qiniu.com/fusion)
+  - [智能多媒体API 官方文档](https://developer.qiniu.com/dora)
+  - [内容审核 官方文档](https://developer.qiniu.com/censor)
+  - [智能日志管理平台 官方文档](https://developer.qiniu.com/insight)
 
 ## 安装
 
@@ -19,7 +19,7 @@ $ npm install node-qiniu-sdk
 
 ## 测试用例
 
-某些请求是需要人民币的，不要频繁测试
+某些请求是需要人民币的，不要频繁测试（单次测试的费用非常非常少）
 
 目前测试用例共102个，如果api我还没有写出来，请先看对应的测试用例
 DEBUG=test mocha可以查看操作返回的具体的数据
@@ -39,7 +39,16 @@ $ DEBUG=test mocha
 $ DEBUG=qiniu-sdk mocha
 ```
 
+## package.json
 
+- 1.1.3版本以后使用node-request-slim
+  本来使用的是request的，但是：
+  1. 由于request模块在提交content-type为text/plain时，会对数据JSON.stringify，所以会多一对“"”分号
+  2. request为防止url异常会把url给eccodeURIComponent
+  这两点在某些请求时会出错，导致请求失败
+
+- 1.6.0版本以后使用qiniu-auth模块加密
+  把加密的部分单独拿出去做一个新的模块，方便其它开发者创建自己的七牛云请求模块
 
 ## 使用简介
 
@@ -144,15 +153,6 @@ await Qiniu.image.processing(common.url, {
 由于旋转后背景色自动填充为白色，请到这个链接查看圆角效果：[链接](https://raw.githubusercontent.com/SunGg12138/node-qiniu-sdk-resource/master/processing.test.jpg)
 
 ![处理后](https://raw.githubusercontent.com/SunGg12138/node-qiniu-sdk-resource/master/processing.test.jpg)
-
-## 没有使用request模块
-
-1. 由于request模块在提交content-type为text/plain时，会对数据JSON.stringify，所以会多一对“"”分号
-2. request为防止url异常会把url给eccodeURIComponent
-
-这两点在某些请求时会出错
-
-1.1.3版本以后使用了新写的请求模块，node-request-slim。
 
 ## 错误码快查
 
