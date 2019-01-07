@@ -8,13 +8,11 @@ const resource = require('./lib/resource');
 const Statistic = require('./lib/statistic');
 const Pandora = require('./lib/pandora');
 const Extends = require('./lib/extends');
-const token = require('./lib/token');
 const debug = require('debug')('qiniu-sdk');
 const rp = require('./lib/request');
 const querystring = require('querystring');
-const EncodedEntryURI = require('./lib/encrypt/EncodedEntryURI');
-const urlsafe_base64_encode = require('./lib/encrypt/urlsafe_base64_encode');
 const Zone = require('./lib/zone');
+const Auth = require('qiniu-auth');
 
 module.exports = SDK;
 
@@ -67,6 +65,13 @@ SDK.prototype.statistic = function(){
   return new Statistic(this);
 };
 /**
+ * 创建Pandora类
+ * 官方文档：https://developer.qiniu.com/insight
+ */
+SDK.prototype.pandora = function(){
+  return new Pandora(this);
+};
+/**
  * 获取 Bucket 列表
  * 官方文档：https://developer.qiniu.com/kodo/api/3926/get-service
 */
@@ -76,13 +81,6 @@ SDK.prototype.buckets = function(){
     path: '/buckets'  // 指定请求的path
   };
   return this.rs(options);
-};
-/**
- * 创建Pandora类
- * 官方文档：https://developer.qiniu.com/insight
- */
-SDK.prototype.pandora = function(){
-  return new Pandora(this);
 };
 /**
  * 异步第三方资源抓取
@@ -129,7 +127,7 @@ SDK.prototype.sisyphus = function(options){
     }
   };
   // 生成HTTP 请求鉴权
-  request_options.headers['Authorization'] = token.qiniu.call(this, request_options);
+  request_options.headers['Authorization'] = Auth.qiniu_token.call(this, request_options);
 
   return rp(request_options);
 };
@@ -162,7 +160,7 @@ SDK.prototype.sisyphusStatus = function(id, zone){
     }
   };
   // 生成HTTP 请求鉴权
-  request_options.headers['Authorization'] = token.qiniu.call(this, request_options);
+  request_options.headers['Authorization'] = Auth.qiniu_token.call(this, request_options);
 
   return rp(request_options);
 };
@@ -220,7 +218,7 @@ SDK.prototype.download = function(options){
 
   // 私有资源需要获取下载token下载
 
-  let RealDownloadUrl = token.download.call(this, { url: url });
+  let RealDownloadUrl = Auth.download_token.call(this, { url: url });
 
   debug('私有资源下载完整url：' + RealDownloadUrl);
 
@@ -274,6 +272,32 @@ SDK.prototype.pfop = function(options){
 };
 
 /**
+ * saveas，处理结果另存编码
+ */
+SDK._saveas = SDK.prototype._saveas =
+function(options){
+  let { AccessKey, SecretKey, url, bucket, fileName } = options;
+  
+  AccessKey = AccessKey || this.AccessKey;
+  SecretKey = SecretKey || this.SecretKey;
+
+  let protocol = /^(http:\/\/|https:\/\/)/.exec(url)[0];
+
+  // 1. 在下载 URL（不含 Scheme 部分，即去除 http : //）后附加 saveas 接口（不含签名部分）
+  let NewURL = url.replace(protocol, '') + '|saveas/' + Auth.encodedEntryURI(bucket, fileName);
+
+  // 2. 使用 SecretKey 对新的下载 URL 进行HMAC1-SHA1签名
+  let Sign = Auth.hmac_sha1(SecretKey, NewURL);
+
+  // 3. 对签名进行URL安全的Base64编码
+  let EncodedSign = Auth.urlsafe_base64_encode(Sign);
+
+  // 4. 在新的下载 URL 后拼接签名参数
+  let FinalURL = protocol + NewURL + '/sign/' + AccessKey + ':' + EncodedSign;
+  
+  return FinalURL;
+};
+/**
  * 处理结果另存
  * 官方文档：https://developer.qiniu.com/dora/manual/1305/processing-results-save-saveas
  * @param {String} bucket 储存桶名称
@@ -281,7 +305,7 @@ SDK.prototype.pfop = function(options){
  */
 SDK.prototype.saveas = function (bucket, fileName) {
   return (url) => {
-    return token.saveas.call(this, url, bucket, fileName);
+    return this._saveas({url, bucket, fileName});
   }
 };
 
@@ -291,42 +315,42 @@ SDK.prototype.saveas = function (bucket, fileName) {
 SDK.prototype.getOperation = function(options){
   switch (options._type) {
     case 'delete':
-      return '/delete/' + EncodedEntryURI(options.bucket, options.fileName);
+      return '/delete/' + Auth.encodedEntryURI(options.bucket, options.fileName);
     case 'move':
-      var EncodedEntryURISrc = EncodedEntryURI(options.bucket, options.fileName);
-      var EncodedEntryURIDest = EncodedEntryURI(options.bucket, options.dest);
+      var EncodedEntryURISrc = Auth.encodedEntryURI(options.bucket, options.fileName);
+      var EncodedEntryURIDest = Auth.encodedEntryURI(options.bucket, options.dest);
       var force = !!options.force;
       return '/move/' + EncodedEntryURISrc + '/' + EncodedEntryURIDest + '/force/' + force;
     case 'copy': 
-      var EncodedEntryURISrc = EncodedEntryURI(options.bucket, options.fileName);
-      var EncodedEntryURIDest = EncodedEntryURI(options.bucket, options.dest);
+      var EncodedEntryURISrc = Auth.encodedEntryURI(options.bucket, options.fileName);
+      var EncodedEntryURIDest = Auth.encodedEntryURI(options.bucket, options.dest);
       var force = !!options.force;
       // 指定请求的path
       return '/copy/' + EncodedEntryURISrc + '/' + EncodedEntryURIDest + '/force/' + force;
     case 'chstatus': 
       // 指定请求的path
-      return '/chstatus/' + EncodedEntryURI(options.bucket, options.fileName) + '/status/' + options.status;
+      return '/chstatus/' + Auth.encodedEntryURI(options.bucket, options.fileName) + '/status/' + options.status;
     case 'deleteAfterDays': 
-      return '/deleteAfterDays/' + EncodedEntryURI(options.bucket, options.fileName) + '/' + options.deleteAfterDays;
+      return '/deleteAfterDays/' + Auth.encodedEntryURI(options.bucket, options.fileName) + '/' + options.deleteAfterDays;
     case 'chtype': 
-      return '/chtype/' + EncodedEntryURI(options.bucket, options.fileName) + '/type/' + options.type;
+      return '/chtype/' + Auth.encodedEntryURI(options.bucket, options.fileName) + '/type/' + options.type;
     case 'stat': 
-      return '/stat/' + EncodedEntryURI(options.bucket, options.fileName);
+      return '/stat/' + Auth.encodedEntryURI(options.bucket, options.fileName);
     case 'prefetch':
-      return '/prefetch/' + EncodedEntryURI(options.bucket, options.fileName);
+      return '/prefetch/' + Auth.encodedEntryURI(options.bucket, options.fileName);
     case 'chgm':
-      var encodedEntryURI = EncodedEntryURI(options.bucket, options.fileName);
+      var encodedEntryURI = Auth.encodedEntryURI(options.bucket, options.fileName);
       var operation = '/chgm/' + encodedEntryURI;
-      options.mimetype && (operation += '/mime/' + urlsafe_base64_encode(options.mimetype));
+      options.mimetype && (operation += '/mime/' + Auth.urlsafe_base64_encode(options.mimetype));
 
       // /x-qn-meta-<meta_key>/<EncodedMetaValue>
       if (Array.isArray(options.metas)) {
         options.metas.forEach(meta => {
-          operation += '/x-qn-meta-' + meta.key + '/' + urlsafe_base64_encode(meta.value);
+          operation += '/x-qn-meta-' + meta.key + '/' + Auth.urlsafe_base64_encode(meta.value);
         });
       }
       // /cond/<Encodedcond>
-      if (options.cond) operation += '/cond/' + urlsafe_base64_encode(options.cond);
+      if (options.cond) operation += '/cond/' + Auth.urlsafe_base64_encode(options.cond);
 
       return operation;
     default:
@@ -348,22 +372,34 @@ SDK.prototype.fopStatus = SDK.fopStatus = function(persistentId){
  */
 SDK.prototype.rs = function(options){
 
+  debug('rs options: S%', options);
+
   // 生成管理凭证
-  let access_token = options.access_token || token.access.call(this, options);
+  let access_token;
+  // 如果有content-type为application/json的情况，需要对body进行JSON.stringify并进行加密
+  if (options.body && options.headers && options.headers['content-type'] === 'application/json') {
+    access_token = Auth.access_token.call(this, {
+      form: JSON.stringify(options.body),
+      path: options.path,
+      query: options.query
+    });
+  } else {
+    access_token = Auth.access_token.call(this, options);
+  }
 
   // 构造请求配置
   let request_options = {
     method: options.method || 'POST',
     url: options.url || (options.host || 'http://rs.qiniu.com') + options.path,
     headers: {
-      'Authorization': 'QBox ' + access_token
+      'Authorization': access_token
     }
   };
 
   if (options.form) {
     request_options.form = options.form;
   } else if (options.body) {
-    request_options.body = typeof options.body === 'string'? options.body : JSON.stringify(options.body);
+    request_options.body = options.body;
   } else {
     request_options.form = {};
   }
@@ -372,6 +408,8 @@ SDK.prototype.rs = function(options){
   if (options['content-type']) {
     request_options.headers['content-type'] = options['content-type'];
   }
+
+  debug('rs request options: S%', request_options);
 
   // 发送请求
   return rp(request_options);

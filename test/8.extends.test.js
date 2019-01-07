@@ -32,7 +32,12 @@ describe('自定义扩展方法测试', function(){
     debug('创建bucket：%s并返回：%s', common.bucketName, JSON.stringify(result));
   });
   it('sliceUpload并发分片上传', async function(){
-    let result = await qiniu.file(common.scope).sliceUpload({ path: __dirname + '/resource/sliceUpload.test.zip', max: 2 });
+    let result;
+    try {
+      result = await qiniu.file(common.scope).sliceUpload({ path: __dirname + '/resource/sliceUpload.test.zip', max: 2 });
+    } catch (error) {
+      console.log(error)
+    }
     debug('sliceUpload并发分片上传并返回：%s', JSON.stringify(result));
     expect(result).to.be.an('object');
     expect(result.hash).to.be.a('string');
