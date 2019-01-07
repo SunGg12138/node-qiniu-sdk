@@ -50,7 +50,7 @@ $ DEBUG=qiniu-sdk mocha
 
   这两点在某些请求时会出错，导致请求失败
 
-- 1.6.0版本以后使用qiniu-auth模块加密
+- 1.6.0版本以后使用[qiniu-auth](https://github.com/SunGg12138/qiniu-auth)模块加密
 
   把加密的部分单独拿出去做一个新的模块，方便其它开发者创建自己的七牛云请求模块
 
