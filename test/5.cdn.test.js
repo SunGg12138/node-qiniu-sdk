@@ -37,7 +37,7 @@ describe('CND 相关方法测试', function(){
     debug('日志下载并返回：%s', JSON.stringify(result));
     
     expect(result).to.be.an('object');
-    expect(result.code === 0).to.be.ok;
+    expect(result.code === 200).to.be.ok;
   });
   it('CDN.loganalyze 日志分析', async function(){
     try {

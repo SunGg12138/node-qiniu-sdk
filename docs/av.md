@@ -58,7 +58,7 @@ await Qiniu.av.review({
   sdk: qiniu,
   body: {
     data: {
-      uri: 'http://pimnrbs1q.bkt.clouddn.com/v0200f5b0000bfsda182sajfu4jn53ng.mp4'
+      uri: 'https://raw.githubusercontent.com/SunGg12138/node-qiniu-sdk-resource/master/av.mp4'
     },
     params: {
       // 异步，只会返回任务id
@@ -314,7 +314,7 @@ await Qiniu.av.concat({
   },
   format: 'mp4',
   urls: [
-    'http://pimnrbs1q.bkt.clouddn.com/av'
+    'https://raw.githubusercontent.com/SunGg12138/node-qiniu-sdk-resource/master/av.mp4'
   ]
 });
 ```

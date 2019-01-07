@@ -268,7 +268,7 @@ const qiniu = new Qiniu('<Your AccessKey>', '<Your SecretKey>');
 
 // 进行ocr身份证识别
 await Qiniu.image.ocr({
-  uri: 'http://pimnrbs1q.bkt.clouddn.com/ocr2.jpg',
+  uri: 'https://raw.githubusercontent.com/SunGg12138/node-qiniu-sdk-resource/master/ocr.jpg',
   sdk: qiniu
 });
 ```

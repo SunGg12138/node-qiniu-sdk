@@ -59,7 +59,7 @@ describe('av 相关方法测试', function(){
       sdk: qiniu,
       body: {
         data: {
-          uri: 'http://pimnrbs1q.bkt.clouddn.com/v0200f5b0000bfsda182sajfu4jn53ng.mp4'
+          uri: 'https://raw.githubusercontent.com/SunGg12138/node-qiniu-sdk-resource/master/av.mp4'
         },
         params: {
           async: true
@@ -229,7 +229,7 @@ describe('av 相关方法测试', function(){
       },
       format: 'mp4',
       urls: [
-        'http://pimnrbs1q.bkt.clouddn.com/av'
+        'https://raw.githubusercontent.com/SunGg12138/node-qiniu-sdk-resource/master/av.mp4'
       ]
     });
     debug('concat 音视频拼接并返回：%s', JSON.stringify(result));

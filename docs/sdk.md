@@ -37,7 +37,7 @@ const qiniu = new Qiniu('<Your AccessKey>', '<Your SecretKey>');
 await qiniu.sisyphus({
   zone: 'z0',
   body: {
-    url: 'http://pimnrbs1q.bkt.clouddn.com/file.image.test.jpg;http://pimnrbs1q.bkt.clouddn.com/processing.test.jpg',
+    url: 'https://raw.githubusercontent.com/SunGg12138/node-qiniu-sdk-resource/master/file.image.test.jpg;https://raw.githubusercontent.com/SunGg12138/node-qiniu-sdk-resource/master/processing.test.jpg',
     bucket: '<存储空间名称>',
     // 还可以指定其他参数，比如：
     // key: '文件的名字.jpg',  // 设置储存后的名称
