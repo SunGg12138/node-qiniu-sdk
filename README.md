@@ -1,6 +1,6 @@
 # node-qiniu-sdk
 
-使用 ES2017 async functions 来操作七牛云，接口名称与官方接口对应，轻松上手
+使用 ES2017 async functions 来操作七牛云，接口名称与官方接口对应，轻松上手，文档齐全
 
 qiniu的官方sdk不太符合日常需要，所以有时间写了个模块，你也可去qiniu官方查看[官方SDK](https://github.com/qiniu/nodejs-sdk)
 
@@ -42,12 +42,16 @@ $ DEBUG=qiniu-sdk mocha
 ## package.json
 
 - 1.1.3版本以后使用node-request-slim
+
   本来使用的是request的，但是：
+
   1. 由于request模块在提交content-type为text/plain时，会对数据JSON.stringify，所以会多一对“"”分号
   2. request为防止url异常会把url给eccodeURIComponent
+
   这两点在某些请求时会出错，导致请求失败
 
 - 1.6.0版本以后使用qiniu-auth模块加密
+
   把加密的部分单独拿出去做一个新的模块，方便其它开发者创建自己的七牛云请求模块
 
 ## 使用简介
