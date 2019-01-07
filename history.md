@@ -1,3 +1,9 @@
+1.6.0
+===============
+ 
+- 使用[qiniu-auth](https://github.com/SunGg12138/qiniu-auth)模块加密
+- 调整了API和测试用例
+
 1.5.2
 ===============
  
