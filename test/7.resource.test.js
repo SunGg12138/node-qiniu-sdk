@@ -110,7 +110,9 @@ describe('resource 相关方法测试', function(){
       path: __dirname + '/resource/qrcode.test.png'
     });
     debug('返回：%s',JSON.stringify(result));
-    expect(result.error).to.be.undefined;
+
+    if (!result) expect(result).to.be.undefined;
+    if (result) expect(result.error).to.be.undefined;
   });
   it('resource.qrcode 处理后的二维码保存到储存空间', async function(){
     let result = await Qiniu.resource.qrcode(common.url, {

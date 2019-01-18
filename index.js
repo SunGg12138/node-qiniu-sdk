@@ -151,9 +151,7 @@ SDK.prototype.sisyphusStatus = function(id, zone){
   let request_options = {
     url: 'http://api-' + zone + '.qiniu.com/sisyphus/fetch?id=' + id,
     host: 'api-' + zone + '.qiniu.com',
-    path: '/sisyphus/fetch',
     method: 'GET',
-    query: 'id=' + id,
     headers: {
       'Authorization': null,
       'Content-Type': 'application/json'
@@ -375,17 +373,7 @@ SDK.prototype.rs = function(options){
   debug('rs options: S%', options);
 
   // 生成管理凭证
-  let access_token;
-  // 如果有content-type为application/json的情况，需要对body进行JSON.stringify并进行加密
-  if (options.body && options.headers && options.headers['content-type'] === 'application/json') {
-    access_token = Auth.access_token.call(this, {
-      form: JSON.stringify(options.body),
-      path: options.path,
-      query: options.query
-    });
-  } else {
-    access_token = Auth.access_token.call(this, options);
-  }
+  let access_token = Auth.access_token.call(this, options);
 
   // 构造请求配置
   let request_options = {
