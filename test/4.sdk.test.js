@@ -80,8 +80,8 @@ describe('SDK 相关方法测试', function(){
     // 不需要管是否操作成功了
     // 只要有正确的返回数据就可以了
     let ops = [
-      { _type: 'move', bucket: common.bucketName, fileName: 'test.png', dest: 'test-1.png', force: false },
-      { _type: 'copy',bucket: common.bucketName,fileName: 'test2.png',dest: 'test-2.png',force: false },
+      { _type: 'move', bucket: common.bucketName, fileName: 'test.png', dest: common.bucketName + ':test-1.png', force: false },
+      { _type: 'copy',bucket: common.bucketName,fileName: 'test2.png',dest: common.bucketName + ':test-2.png',force: false },
       { _type: 'chtype', bucket: common.bucketName, fileName: 'test3.png', type: 1 },
       { _type: 'stat', bucket: common.bucketName, fileName: 'test-1.png' },
       { _type: 'delete', bucket: common.bucketName,fileName: 'test.js' }

@@ -316,12 +316,12 @@ SDK.prototype.getOperation = function(options){
       return '/delete/' + Auth.encodedEntryURI(options.bucket, options.fileName);
     case 'move':
       var EncodedEntryURISrc = Auth.encodedEntryURI(options.bucket, options.fileName);
-      var EncodedEntryURIDest = Auth.encodedEntryURI(options.destBucket, options.destFileName);
+      var EncodedEntryURIDest = Auth.encodedEntryURI(options.dest);
       var force = !!options.force;
       return '/move/' + EncodedEntryURISrc + '/' + EncodedEntryURIDest + '/force/' + force;
     case 'copy': 
       var EncodedEntryURISrc = Auth.encodedEntryURI(options.bucket, options.fileName);
-      var EncodedEntryURIDest = Auth.encodedEntryURI(options.destBucket, options.destFileName);
+      var EncodedEntryURIDest = Auth.encodedEntryURI(options.dest);
       var force = !!options.force;
       // 指定请求的path
       return '/copy/' + EncodedEntryURISrc + '/' + EncodedEntryURIDest + '/force/' + force;

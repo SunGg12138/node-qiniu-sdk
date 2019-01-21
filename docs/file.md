@@ -84,7 +84,7 @@ file.copy(dest[, isForce]);
 [官方文档](https://developer.qiniu.com/kodo/api/1254/copy)
 
 有2个参数：
-  - dest(必选): String类型，表示copy后的新文件名字
+  - dest(必选): String类型，表示copy后新的scope(空间名:文件名)
   - isForce(可选): Boolean类型，表示是否强制copy，如果新文件名字重名，强制copy会覆盖原文件，非强制copy会报错（默认为false）
 
 ```javascript
@@ -97,7 +97,7 @@ const qiniu = new Qiniu('<Your AccessKey>', '<Your SecretKey>');
 const file = qiniu.file('<存储空间名称>:<文件名称>');
 
 // 复制出一个新文件并命名为kk.js，并设置强制copy
-await file.copy('kk.js', true);
+await file.copy('<存储空间名称>:kk.js', true);
 ```
 
 ### 资源移动／重命名
@@ -107,7 +107,7 @@ file.move(dest[, isForce]);
 [官方文档](https://developer.qiniu.com/kodo/api/1288/move)
 
 有2个参数：
-  - dest(必选): String类型，表示move后的新文件名字
+  - dest(必选): String类型，表示move后新的scope(空间名:文件名)
   - isForce(可选): Boolean类型，表示是否强制move，如果新文件名字重名，强制move会覆盖原文件，非强制move会报错（默认为false）
 
 ```javascript
@@ -120,7 +120,7 @@ const qiniu = new Qiniu('<Your AccessKey>', '<Your SecretKey>');
 const file = qiniu.file('<存储空间名称>:<文件名称>');
 
 // 重命名为kk.js，并设置强制move
-await file.move('kk.js', true);
+await file.move('<存储空间名称>:kk.js', true);
 ```
 
 ### 修改文件状态

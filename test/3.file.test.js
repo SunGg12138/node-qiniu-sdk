@@ -18,6 +18,7 @@ const qiniu = new Qiniu(qiniu_config.AccessKey, qiniu_config.SecretKey);
 
 const common = {
   bucketName: null,
+  bucketName_2: null,
   fileName: 'f.js',
   scope: null
 };
@@ -30,6 +31,13 @@ describe('File 相关方法测试', function () {
 
     let result = await qiniu.bucket(common.bucketName).mk();
     debug('创建bucket：%s并返回：%s', common.bucketName, JSON.stringify(result));
+
+    // 随机个名字
+    common.bucketName_2 = new Date().getTime() + '';
+
+    let result2 = await qiniu.bucket(common.bucketName_2).mk();
+    debug('创建bucket：%s并返回：%s', common.bucketName_2, JSON.stringify(result2));
+
     expect(result).to.be.an('object');
     expect(result.error).to.be.undefined;
   });
@@ -69,11 +77,25 @@ describe('File 相关方法测试', function () {
     debug('复制文件并在储存空间的名字为：%s并返回：%s', 'f_copy.js', JSON.stringify(result));
     expect(result === '').to.be.ok
   });
+  it('copy 资源复制，跨储存桶测试', async function () {
+    // 官方文档：https://developer.qiniu.com/kodo/api/1254/copy
+    // 成功会返回''
+    let result = await qiniu.file(common.scope).copy(common.bucketName_2 + ':f_copy.js');
+    debug('复制文件并在第二个储存空间的名字为：%s并返回：%s', 'f_copy.js', JSON.stringify(result));
+    expect(result === '').to.be.ok
+  });
   it('move 资源移动／重命名', async function () {
     // 官方文档：https://developer.qiniu.com/kodo/api/1288/move
     // 成功会返回''
     let result = await qiniu.file(common.bucketName + ':f_copy.js').move('f_copy_move.js');
     debug('资源移动／重命名文件并在储存空间的新名字为：%s并返回：%s', 'f_copy_move.js', JSON.stringify(result));
+    expect(result === '').to.be.ok
+  });
+  it('move 资源移动／重命名，跨储存桶测试', async function () {
+    // 官方文档：https://developer.qiniu.com/kodo/api/1288/move
+    // 成功会返回''
+    let result = await qiniu.file(common.bucketName + ':f_copy_move.js').move(common.bucketName_2 + ':f_copy_move_2.js');
+    debug('资源移动／重命名文件并在第二个储存空间的新名字为：%s并返回：%s', 'f_copy_move.js', JSON.stringify(result));
     expect(result === '').to.be.ok
   });
   it('chstatus 修改文件状态', async function () {
@@ -166,6 +188,8 @@ describe('File 相关方法测试', function () {
   after(async function () {
     let result = await qiniu.bucket(common.bucketName).drop();
     debug('删除Bucket并返回：%s', JSON.stringify(result));
+    let result2 = await qiniu.bucket(common.bucketName_2).drop();
+    debug('删除Bucket并返回：%s', JSON.stringify(result2));
     expect(result).to.be.an('object');
     expect(result.error).to.be.undefined;
   });
