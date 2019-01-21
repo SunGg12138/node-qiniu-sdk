@@ -1,6 +1,6 @@
 {
   "name": "node-qiniu-sdk",
-  "version": "1.6.2",
+  "version": "1.6.5",
   "description": "nodejs，七牛云异步操作模块",
   "main": "index.js",
   "directories": {
