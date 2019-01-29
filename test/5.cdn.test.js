@@ -1,13 +1,6 @@
-try {
-  require('./resource/qiniu.config');
-} catch (error) {
-  throw new Error(`
-  先配置你的/test/resource/qiniu.config.json文件再测试
-  qiniu.config.json是放置AccessKey和SecretKey的配置文件
-  1. 配置你的AccessKey和SecretKey到/test/resource/qiniu.config.default.json 
-  2. qiniu.config.default.json 改名为qiniu.config.json
-  `);
-}
+const common = require('./common');
+// 检查是否已经配置好了qiniu.config文件
+common.beforeTest();
 
 const expect = require('chai').expect;
 const debug = require('debug')('test');
@@ -15,22 +8,22 @@ const Qiniu = require('../index');
 const qiniu_config = require('./resource/qiniu.config');
 const qiniu = new Qiniu(qiniu_config.AccessKey, qiniu_config.SecretKey);
 
-const common = {
+const CONST = {
   bucketName: null
 };
 describe('CND 相关方法测试', function(){
   this.timeout(20000);
   before(async function(){
     // 随机个名字
-    common.bucketName = new Date().getTime() + '';
-    let result = await qiniu.bucket(common.bucketName).mk();
-    debug('创建bucket：%s并返回：%s', common.bucketName, JSON.stringify(result));
+    CONST.bucketName = new Date().getTime() + '';
+    let result = await qiniu.bucket(CONST.bucketName).mk();
+    debug('创建bucket：%s并返回：%s', CONST.bucketName, JSON.stringify(result));
     expect(result).to.be.an('object');
     expect(result.error).to.be.undefined;
   });
   it('CDN.log 日志下载', async function(){
-    let domains = common.domains || await qiniu.bucket(common.bucketName).domain();
-    common.domains = domains;
+    let domains = CONST.domains || await qiniu.bucket(CONST.bucketName).domain();
+    CONST.domains = domains;
 
     let result = await qiniu.cdn.log('2018-05-14', domains);
 
@@ -41,8 +34,8 @@ describe('CND 相关方法测试', function(){
   });
   it('CDN.loganalyze 日志分析', async function(){
     try {
-      let domains = common.domains || await qiniu.bucket(common.bucketName).domain();
-      common.domains = domains;
+      let domains = CONST.domains || await qiniu.bucket(CONST.bucketName).domain();
+      CONST.domains = domains;
       let result;
 
       result = await qiniu.cdn.loganalyze({
@@ -107,7 +100,7 @@ describe('CND 相关方法测试', function(){
     expect(result.code === 200).to.be.ok;
   });
   after(async function(){
-    let result = await qiniu.bucket(common.bucketName).drop();
+    let result = await qiniu.bucket(CONST.bucketName).drop();
     debug('删除Bucket并返回：%s', JSON.stringify(result));
     expect(result).to.be.an('object');
     expect(result.error).to.be.undefined;

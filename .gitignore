@@ -2,12 +2,16 @@ node_modules/
 package-lock.json
 .DS_Store
 
-# 测试
+# 忽略测试文件
 # qiniu.config.json是放置AccessKey和SecretKey的配置文件
 # 格式与qiniu.config.default.json相同，你需要配置你的qiniu.config.json
 test/resource/qiniu.config.json
 test/resource/processing.test.jpg
 test/resource/qrcode.test.png
-image.download.public.test.jpg
-image.download.private.test.jpg
+test/resource/image.download.public.test.jpg
+test/resource/image.download.private.test.jpg
 test/resource/pm3u8.txt
+
+# test/resource/sliceUpload.test.zip
+# test/resource/file.image.test.jpg
+# test/resource/av.mp4

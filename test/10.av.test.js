@@ -1,13 +1,6 @@
-try {
-  require('./resource/qiniu.config');
-} catch (error) {
-  throw new Error(`
-  先配置你的/test/resource/qiniu.config.json文件再测试
-  qiniu.config.json是放置AccessKey和SecretKey的配置文件
-  1. 配置你的AccessKey和SecretKey到/test/resource/qiniu.config.default.json 
-  2. qiniu.config.default.json 改名为qiniu.config.json
-  `);
-}
+const common = require('./common');
+// 检查是否已经配置好了qiniu.config文件
+common.beforeTest();
 
 const fs = require('fs');
 const expect = require('chai').expect;
@@ -16,7 +9,7 @@ const Qiniu = require('../index');
 const qiniu_config = require('./resource/qiniu.config');
 const qiniu = new Qiniu(qiniu_config.AccessKey, qiniu_config.SecretKey);
 
-const common = {
+const CONST = {
   bucketName: null,
   fileName: 'av.mp4',
   avsmartFileName: 'av_avsmart.mp4',
@@ -31,25 +24,29 @@ describe('av 相关方法测试', function(){
   this.timeout(30000);
 
   before(async function(){
+    
+    // 下载av.mp4测试文件
+    await common.testFile('av.mp4');
+
     // 随机个名字
-    common.bucketName = new Date().getTime() + '';
-    common.scope = common.bucketName + ':' + common.fileName;
+    CONST.bucketName = new Date().getTime() + '';
+    CONST.scope = CONST.bucketName + ':' + CONST.fileName;
 
     // 创建储存空间
-    let r1 = await qiniu.bucket(common.bucketName).mk();
-    debug('创建bucket：%s并返回：%s', common.bucketName, JSON.stringify(r1));
+    let r1 = await qiniu.bucket(CONST.bucketName).mk();
+    debug('创建bucket：%s并返回：%s', CONST.bucketName, JSON.stringify(r1));
 
     // 上传视频
-    let r2 = await qiniu.file(common.scope).upload(__dirname + '/resource/av.mp4');
+    let r2 = await qiniu.file(CONST.scope).upload(__dirname + '/resource/av.mp4');
     debug('上传视频返回：%s', JSON.stringify(r2));
 
     // 获取空间域名
-    let r3 = await qiniu.bucket(common.bucketName).domain();
+    let r3 = await qiniu.bucket(CONST.bucketName).domain();
     debug('获取空间域名返回：%s', JSON.stringify(r3));
-    common.domain = 'http://' + r3[0];
+    CONST.domain = 'http://' + r3[0];
 
     // 文件路径
-    common.url = common.domain + '/' + common.fileName;
+    CONST.url = CONST.domain + '/' + CONST.fileName;
   });
 
   it('review 视频三鉴', async function(){
@@ -111,12 +108,12 @@ describe('av 相关方法测试', function(){
   it('avsmart 锐智转码', async function(){
     let result = await Qiniu.av.avsmart({
       pfop: qiniu.pfop({
-        bucketName: common.bucketName,
-        fileName: common.fileName,
+        bucketName: CONST.bucketName,
+        fileName: CONST.fileName,
       }),
       saveas: {
-        bucketName: common.bucketName,
-        fileName: common.avsmartFileName,
+        bucketName: CONST.bucketName,
+        fileName: CONST.avsmartFileName,
       }
     });
     debug('avsmart 锐智转码并返回：%s', JSON.stringify(result));
@@ -132,12 +129,12 @@ describe('av 相关方法测试', function(){
   it('avthumb 普通音视频转码', async function(){
     let result = await Qiniu.av.avthumb({
       pfop: qiniu.pfop({
-        bucketName: common.bucketName,
-        fileName: common.fileName,
+        bucketName: CONST.bucketName,
+        fileName: CONST.fileName,
       }),
       saveas: {
-        bucketName: common.bucketName,
-        fileName: common.avthumbFileName,
+        bucketName: CONST.bucketName,
+        fileName: CONST.avthumbFileName,
       },
       format: 'mp4',
       vb: '1.25m'
@@ -155,8 +152,8 @@ describe('av 相关方法测试', function(){
   it('segment 音视频分段', async function(){
     let result = await Qiniu.av.segment({
       pfop: qiniu.pfop({
-        bucketName: common.bucketName,
-        fileName: common.fileName,
+        bucketName: CONST.bucketName,
+        fileName: CONST.fileName,
       }),
       format: 'mp4',
       segtime: 5,
@@ -175,8 +172,8 @@ describe('av 相关方法测试', function(){
   it('hls 音视频切片（HLS）', async function(){
     let result = await Qiniu.av.hls({
       pfop: qiniu.pfop({
-        bucketName: common.bucketName,
-        fileName: common.fileName,
+        bucketName: CONST.bucketName,
+        fileName: CONST.fileName,
       }),
       noDomain: '1',
       format: 'mp4',
@@ -196,12 +193,12 @@ describe('av 相关方法测试', function(){
   it('watermark 视频水印', async function(){
     let result = await Qiniu.av.watermark({
       pfop: qiniu.pfop({
-        bucketName: common.bucketName,
-        fileName: common.fileName,
+        bucketName: CONST.bucketName,
+        fileName: CONST.fileName,
       }),
       saveas: {
-        bucketName: common.bucketName,
-        fileName: common.watermarkFileName,
+        bucketName: CONST.bucketName,
+        fileName: CONST.watermarkFileName,
       },
       format: 'mp4',
       vb: '1.25m',
@@ -220,12 +217,12 @@ describe('av 相关方法测试', function(){
   it('concat 音视频拼接', async function(){
     let result = await Qiniu.av.concat({
       pfop: qiniu.pfop({
-        bucketName: common.bucketName,
-        fileName: common.fileName,
+        bucketName: CONST.bucketName,
+        fileName: CONST.fileName,
       }),
       saveas: {
-        bucketName: common.bucketName,
-        fileName: common.concatFileName,
+        bucketName: CONST.bucketName,
+        fileName: CONST.concatFileName,
       },
       format: 'mp4',
       urls: [
@@ -244,7 +241,7 @@ describe('av 相关方法测试', function(){
   });
 
   it('avinfo 音视频元信息', async function(){
-    let result = await Qiniu.av.avinfo(common.url);
+    let result = await Qiniu.av.avinfo(CONST.url);
     debug('avinfo 音视频元信息并返回：%s', JSON.stringify(result));
     expect(result).to.be.an('object');
   });
@@ -252,11 +249,11 @@ describe('av 相关方法测试', function(){
   it('vframe 视频帧缩略图', async function(){
     let result = await Qiniu.av.vframe({
       pfop: qiniu.pfop({
-        bucketName: common.bucketName,
-        fileName: common.fileName,
+        bucketName: CONST.bucketName,
+        fileName: CONST.fileName,
       }),
       saveas: {
-        bucketName: common.bucketName,
+        bucketName: CONST.bucketName,
         fileName: 'av.png',
       },
       offset: 1,
@@ -276,8 +273,8 @@ describe('av 相关方法测试', function(){
   it('vsample 视频采样缩略图', async function(){
     let result = await Qiniu.av.vsample({
       pfop: qiniu.pfop({
-        bucketName: common.bucketName,
-        fileName: common.fileName,
+        bucketName: CONST.bucketName,
+        fileName: CONST.fileName,
       }),
       pattern: 'vframe-$(count).png',
       ss: '0',
@@ -306,8 +303,8 @@ describe('av 相关方法测试', function(){
   it('adapt 多码率自适应转码', async function(){
     let result = await Qiniu.av.adapt({
       pfop: qiniu.pfop({
-        bucketName: common.bucketName,
-        fileName: common.fileName,
+        bucketName: CONST.bucketName,
+        fileName: CONST.fileName,
       }),
       envBandWidth: '200000,800000',
       multiPrefix: [
@@ -339,11 +336,11 @@ describe('av 相关方法测试', function(){
     });
 
     // 必须要设置私有化，否则会报错
-    let r1 = await qiniu.bucket(common.bucketName).private(1);
+    let r1 = await qiniu.bucket(CONST.bucketName).private(1);
     debug('设置Bucket访问权限并返回：%s', JSON.stringify(r1));
 
     let r2 = await Qiniu.av.pm3u8({
-      url: common.domain + '/adapt_test-a.m3u8',
+      url: CONST.domain + '/adapt_test-a.m3u8',
       qiniu: qiniu,
       path: __dirname + '/resource/pm3u8.txt'
     });
@@ -355,7 +352,7 @@ describe('av 相关方法测试', function(){
   });
   
   after(async function(){
-    let result = await qiniu.bucket(common.bucketName).drop();
+    let result = await qiniu.bucket(CONST.bucketName).drop();
     debug('删除Bucket并返回：%s', JSON.stringify(result));
     expect(result).to.be.an('object');
     expect(result.error).to.be.undefined;
