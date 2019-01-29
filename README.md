@@ -24,7 +24,9 @@ $ npm install node-qiniu-sdk
 目前测试用例共104个，如果api我还没有写出来，请先看对应的测试用例
 DEBUG=test mocha可以查看操作返回的具体的数据
 
-av.pm3u8接口有可能出现超时的情况
+第一次测试会下载一些测试文件，如果网络不好会出现before部分超时，测试资源请看[node-qiniu-sdk-resource](https://github.com/SunGg12138/node-qiniu-sdk-resource)
+
+av.pm3u8测试接口有可能出现超时的情况
 
 ```bash
 # 先配置你的/test/resource/qiniu.config.json文件再测试
