@@ -21,7 +21,7 @@ const CONST = {
   url: null
 };
 describe('av 相关方法测试', function(){
-  this.timeout(30000);
+  this.timeout(40000);
 
   before(async function(){
     

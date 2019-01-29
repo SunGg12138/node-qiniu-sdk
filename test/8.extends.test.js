@@ -16,7 +16,7 @@ const CONST = {
 };
 
 describe('自定义扩展方法测试', function(){
-  this.timeout(30000);
+  this.timeout(60000);
   before(async function(){
 
     // 下载sliceUpload并发分片上传的测试文件
